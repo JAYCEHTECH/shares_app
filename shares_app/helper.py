@@ -11,7 +11,7 @@ def send_flexi_bundle(current_user, user_details, receiver, bundle):
         "accountNo": f"233{str(user_details.phone)}",
         "accountFirstName": current_user.first_name,
         "accountLastName": current_user.last_name,
-        "accountMsisdn": str(receiver),
+        "accountMsisdn": str(receiver).strip(),
         "accountEmail": current_user.email,
         "accountVoiceBalance": 0,
         "accountDataBalance": float(bundle),
