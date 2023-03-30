@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Content -->
+
+    <div class="container-xxl">
+      <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+          <!-- Register Card -->
+          <div class="card">
+            <div class="card-body">
+              <h4 class="mb-2">Adventure starts here 🚀</h4>
+              <p class="mb-4">Sign up and manage your own space!</p>
+
+              <form id="formAuthentication" class="mb-3" method="POST">
+                  {% csrf_token %}
+                <div class="mb-3">
+                  <label for="username" class="form-label">First Name</label>
+                    {{form.first_name}}
+                </div>
+                <div class="mb-3">
+                  <label for="username" class="form-label">Last Name</label>
+                    {{form.last_name}}
+                </div>
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username</label>
+                    {{form.username}}
+                </div>
+                <div class="mb-3">
+                  <label for="username" class="form-label">Business Name</label>
+                    {{form.business_name}}
+                </div>
+                <div class="mb-3">
+                  <label for="username" class="form-label">Phone</label>
+                    {{form.phone}}
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" />
+                </div>
+                <div class="mb-3 form-password-toggle">
+                  <label class="form-label" for="password">Password</label>
+                  <div class="input-group input-group-merge">
+                      {{form.password1}}
+                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                  </div>
+                </div>
+                <div class="mb-3 form-password-toggle">
+                  <label class="form-label" for="password">Confirm Password</label>
+                  <div class="input-group input-group-merge">
+                      {{form.password2}}
+                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                  </div>
+                </div>
+                <div class="mb-3 form-password-toggle">
+                  <label class="form-label" for="password">Authentication Code</label>
+                  <div class="input-group input-group-merge">
+                    <input
+                      type="text"
+                      id="code"
+                      class="form-control"
+                      name="code"
+                      placeholder="Input your authorisation code"
+                      aria-describedby="code"
+                    />
+                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary d-grid w-100">Sign up</button>
+              </form>
+
+              <p class="text-center">
+                <span>Already have an account?</span>
+                <a href="{% url 'login' %}">
+                  <span>Sign in instead</span>
+                </a>
+              </p>
+            </div>
+          </div>
+          <!-- Register Card -->
+        </div>
+      </div>
+    </div>
+
+    <!-- / Content -->
+
+{% endblock content %}
