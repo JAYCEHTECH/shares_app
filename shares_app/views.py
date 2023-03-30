@@ -14,7 +14,7 @@ from shares_app.forms import CustomUserForm
 # Create your views here.
 @login_required(login_url='login')
 def home(request):
-    user_profile_data = models.UserProfile.objects.get(user=request.user)
+    user_profile_data = models.UserProfile.objects.filter(user=request.user).first()
     transactions_count = models.TransactionHistory.objects.filter(user=request.user).count()
     context = {'data': user_profile_data, 'count': transactions_count}
     return render(request, 'layouts/index.html', context=context)
@@ -27,14 +27,14 @@ def user_profile(request):
         phone = request.POST.get("phoneNumber")
         sms_name = request.POST.get("smsName")
 
-        updated_user = models.UserProfile.objects.get(user=request.user)
+        updated_user = models.UserProfile.objects.filter(user=request.user).first()
         updated_user.business_name = business_name
         updated_user.phone = phone
         updated_user.sms_sender_name = sms_name
 
         updated_user.save()
         messages.success(request, "Profile Updated Successfully")
-    user_profile_details = models.UserProfile.objects.get(user=request.user)
+    user_profile_details = models.UserProfile.objects.filter(user=request.user).first()
     context = {'data': user_profile_details}
     return render(request, 'layouts/user_profile.html', context=context)
 
@@ -47,7 +47,7 @@ def send_bundle_page(request):
 
         reference = f"BPS{secrets.token_hex(3)}".upper()
 
-        current_user = models.UserProfile.objects.get(user=request.user)
+        current_user = models.UserProfile.objects.filter(user=request.user).first()
 
         if amount > int(current_user.bundle_amount):
             messages.error(request, "Not enough bundle to send")
@@ -89,7 +89,7 @@ def send_bundle_page(request):
                 )
                 new_transaction.save()
                 messages.error(request, "Transaction Failed")
-    user_profile_data = models.UserProfile.objects.get(user=request.user)
+    user_profile_data = models.UserProfile.objects.filter(user=request.user).first()
     context = {'data': user_profile_data}
 
     return render(request, 'layouts/form-layouts-vertical.html', context=context)
@@ -98,7 +98,7 @@ def send_bundle_page(request):
 @login_required(login_url='login')
 def transaction_history(request):
     transactions = models.TransactionHistory.objects.filter(user=request.user).order_by('transaction_date').reverse()
-    user_profile_data = models.UserProfile.objects.get(user=request.user)
+    user_profile_data = models.UserProfile.objects.filter(user=request.user).first()
     context = {'txns': transactions, 'data': user_profile_data}
     return render(request, 'layouts/txn-tables.html', context=context)
 
