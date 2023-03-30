@@ -44,6 +44,8 @@ def send_bundle_page(request):
     if request.method == "POST":
         receiver = request.POST.get("phone")
         string_r = receiver[3:]
+        print(string_r)
+        print(type(string_r))
         amount = int(request.POST.get("amount"))
 
         reference = f"BPS{secrets.token_hex(3)}".upper()
