@@ -20,7 +20,7 @@ def send_flexi_bundle(current_user, user_details, receiver, bundle):
     })
 
     headers = {
-        'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkY2I3ZmZiZi1mNWE3LTQ2YjUtOGQyMC0wNWMwYjYyMWY3YWMiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiaWF0IjoxNjgwMTc4Nzk3LCJleHAiOjE2ODAyMjA4MDB9.z84drleKn5LVnPFGIWDYJ5sMh70G2QiI-05_dHpjgvrHSSeiAX09_ymipL6cC-3-XDEQmJyG6aTQzTe0SwDrhg',
+        'Authorization': config("BEARER_TOKEN"),
         'Content-Type': 'application/json'
     }
 
@@ -37,7 +37,7 @@ def verify_bundle_txn(batch_id):
 
     payload = {}
     headers = {
-        'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkY2I3ZmZiZi1mNWE3LTQ2YjUtOGQyMC0wNWMwYjYyMWY3YWMiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiaWF0IjoxNjgwMTc4Nzk3LCJleHAiOjE2ODAyMjA4MDB9.z84drleKn5LVnPFGIWDYJ5sMh70G2QiI-05_dHpjgvrHSSeiAX09_ymipL6cC-3-XDEQmJyG6aTQzTe0SwDrhg'
+        'Authorization': config("BEARER_TOKEN")
     }
 
     response = requests.request("GET", url, headers=headers, data=payload)
