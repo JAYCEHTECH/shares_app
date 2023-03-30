@@ -26,7 +26,10 @@ SECRET_KEY = 'django-insecure-+s*vu+)l&&f9+o_u)-4&hp04!@=hddianv7-tb1(op5-xr5y^q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'shares-app-ap9ke.ondigitalocean.app',
+
+]
 
 LOGOUT_REDIRECT_URL = "login"
 
