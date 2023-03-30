@@ -13,8 +13,12 @@ class AuthorizationCodesAdmin(admin.ModelAdmin):
     list_display = ['code', 'code_status']
 
 
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'business_name', 'phone', 'bundle_amount']
+
+
 admin.site.register(models.CustomUser, CustomUserAdmin)
-admin.site.register(models.UserProfile)
+admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.TransactionHistory)
 admin.site.register(models.AuthorizationCodes, AuthorizationCodesAdmin)
 
