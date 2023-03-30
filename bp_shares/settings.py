@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'shares-app-ap9ke.ondigitalocean.app',
-
+    'console.bestpaygh.com',
 ]
 
 LOGOUT_REDIRECT_URL = "login"
