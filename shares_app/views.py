@@ -43,6 +43,7 @@ def user_profile(request):
 def send_bundle_page(request):
     if request.method == "POST":
         receiver = request.POST.get("phone")
+        string_r = str(receiver)
         amount = int(request.POST.get("amount"))
 
         reference = f"BPS{secrets.token_hex(3)}".upper()
@@ -74,9 +75,7 @@ def send_bundle_page(request):
                 new_transaction.save()
                 messages.success(request, "Transaction Successful.")
                 receiver_message = f"Your bundle purchase has been completed successfully. {amount}MB has been credited to you.\nReference: {batch_id}\n"
-                print(current_user.sms_sender_name)
-                print(receiver)
-                sms_url = f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to={receiver}&from=Bundle&sms={receiver_message}"
+                sms_url = f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to={string_r}&from=BESTPAY GH&sms={receiver_message}"
                 response = requests.request("GET", url=sms_url)
                 print(response.status_code)
                 print(response.text)
