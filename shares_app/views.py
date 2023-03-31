@@ -43,9 +43,7 @@ def user_profile(request):
 def send_bundle_page(request):
     if request.method == "POST":
         receiver = request.POST.get("phone")
-        string_r = receiver[3:]
-        print(string_r)
-        print(type(string_r))
+        print(receiver)
         amount = int(request.POST.get("amount"))
 
         reference = f"BPS{secrets.token_hex(3)}".upper()
@@ -75,7 +73,6 @@ def send_bundle_page(request):
                     batch_id=batch_id
                 )
                 new_transaction.save()
-                print(f"0{string_r}")
                 print(current_user.sms_sender_name)
                 messages.success(request, "Transaction Successful.")
                 receiver_message = f"Your bundle purchase has been completed successfully. {amount}MB has been credited to you.\nReference: {batch_id}\n"
@@ -84,7 +81,7 @@ def send_bundle_page(request):
                     'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
                     'sender_id': current_user.sms_sender_name,
                     'message': receiver_message,
-                    'recipient': f"0{string_r}"
+                    'recipient': receiver
                 }
 
                 headers = {'Content-type': 'application/json'}
