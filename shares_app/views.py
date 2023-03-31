@@ -75,9 +75,11 @@ def send_bundle_page(request):
                     batch_id=batch_id
                 )
                 new_transaction.save()
+                print(f"0{string_r}")
+                print(current_user.sms_sender_name)
                 messages.success(request, "Transaction Successful.")
                 receiver_message = f"Your bundle purchase has been completed successfully. {amount}MB has been credited to you.\nReference: {batch_id}\n"
-                sms_url = f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to=0{string_r}&from=BP Bundle&sms={receiver_message}"
+                sms_url = f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to=0{string_r}&from={current_user.sms_sender_name}&sms={receiver_message}"
                 response = requests.request("GET", url=sms_url)
                 print(response.status_code)
                 print(response.text)
