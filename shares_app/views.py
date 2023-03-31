@@ -79,16 +79,18 @@ def send_bundle_page(request):
                 print(current_user.sms_sender_name)
                 messages.success(request, "Transaction Successful.")
                 receiver_message = f"Your bundle purchase has been completed successfully. {amount}MB has been credited to you.\nReference: {batch_id}\n"
-                url = f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to={receiver}&from={current_user.sms_sender_name}&sms={receiver_message}"
-
-                payload = {}
-                headers = {
-                    'Cookie': 'XSRF-TOKEN=eyJpdiI6IlpzQnNsbmpqMm92cWZKZ1I5NERacUE9PSIsInZhbHVlIjoiV2hVdEwyRTFCOEZudmFUdU5YdmI5TFdtZm1LaEdvejBOMDR6QlloVS9Hak0yM2lEVmFRblFlRVJjdHgxZm5RcTJDYVVaZGNVM2dhYm1kdE93ZnZlekcwWU9SazVqU0txbHVCK214UnJBdlZWb0hsMDhUY0lCbWhaTm9lbytSR2giLCJtYWMiOiI3NjZhYmMwOWZiODEyODZjNzk2YTY5MGY4MmY3MGExZTBkZGEyMzI5OWRmZDQ4YjM4NDI1MDE5NDIxNDI0ZWQwIiwidGFnIjoiIn0%3D; arkesel_sms_messenger_session=eyJpdiI6Ik5PL0lsREdienhaRDEvM0oxUnJoa3c9PSIsInZhbHVlIjoicVM4NEY4eFJxYW0xbWh6MUdrNFAzOHZzS21NSy91OTlNUHJsaGV1VVF1aUxzdkRqcERyOGw0bytlQ05aQlZmYUh2QW9mdWdHRGwxVVdDcVRjR2lLRTY5SU14NHU3MmY5T1l5WWZiUzRaMXhrZ1M5c3JQZnduWlVZWkFQUGZPR3ciLCJtYWMiOiI0NDU5N2Q1NGE0YWU2YmE4ODQ3Yjc5M2NmNDkwYjJlMjQ3MGFhOWY3MGQ2NTYyOGIxYzFmY2U5MTQ2M2ZkNWQ4IiwidGFnIjoiIn0%3D'
+                quicksend_url = "https://uellosend.com/quicksend/"
+                data = {
+                    'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
+                    'sender_id': current_user.sms_sender_name,
+                    'message': receiver_message,
+                    'recipient': f"0{string_r}"
                 }
 
-                response = requests.request("GET", url, headers=headers, data=payload)
+                headers = {'Content-type': 'application/json'}
 
-                print(response.text)
+                response = requests.post(quicksend_url, headers=headers, json=data)
+                print(response.json())
 
             else:
                 new_transaction = models.TransactionHistory.objects.create(
