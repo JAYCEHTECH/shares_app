@@ -17,11 +17,11 @@
                   {% csrf_token %}
                 <div class="mb-3">
                 {% if form.first_name.errors %}
-                    <ol>
+                    <ul>
                     {% for error in form.first_name.errors %}
                         <li><strong>{{ error|escape }}</strong></li>
                     {% endfor %}
-                    </ol>
+                    </ul>
                 {% endif %}
                   <label for="username" class="form-label">First Name</label>
                     {{form.first_name}}
@@ -29,43 +29,43 @@
 
                 <div class="mb-3">
                 {% if form.last_name.errors %}
-                    <ol>
+                    <ul>
                     {% for error in form.last_name.errors %}
                         <li><strong>{{ error|escape }}</strong></li>
                     {% endfor %}
-                    </ol>
+                    </ul>
                 {% endif %}
                   <label for="username" class="form-label">Last Name</label>
                     {{form.last_name}}
                 </div>
                 <div class="mb-3">
                 {% if form.username.errors %}
-                    <ol>
+                    <ul>
                     {% for error in form.username.errors %}
                         <li><strong>{{ error|escape }}</strong></li>
                     {% endfor %}
-                    </ol>
+                    </ul>
                 {% endif %}
                   <label for="username" class="form-label">Username</label>
                     {{form.username}}
                 </div>
                 <div class="mb-3">
                 {% if form.business_name.errors %}
-                    <ol>
+                    <ul>
                     {% for error in form.business_name.errors %}
                         <li><strong>{{ error|escape }}</strong></li>
                     {% endfor %}
-                    </ol>
+                    </ul>
                 {% endif %}
                   <label for="username" class="form-label">Business Name</label>
                     {{form.business_name}}
                 </div>
                 {% if form.phone.errors %}
-                    <ol>
+                    <ul>
                     {% for error in form.phone.errors %}
                         <li><strong>{{ error|escape }}</strong></li>
                     {% endfor %}
-                    </ol>
+                    </ul>
                 {% endif %}
                 <div class="mb-3">
                   <label for="username" class="form-label">Phone</label>
@@ -73,22 +73,22 @@
                 </div>
                 <div class="mb-3">
                 {% if form.email.errors %}
-                    <ol>
+                    <ul>
                     {% for error in form.email.errors %}
                         <li><strong>{{ error|escape }}</strong></li>
                     {% endfor %}
-                    </ol>
+                    </ul>
                 {% endif %}
                   <label for="email" class="form-label">Email</label>
                   <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" />
                 </div>
                 <div class="mb-3 form-password-toggle">
                     {% if form.password1.errors %}
-                    <ol>
+                    <ul>
                     {% for error in form.password1.errors %}
                         <li><strong>{{ error|escape }}</strong></li>
                     {% endfor %}
-                    </ol>
+                    </ul>
                 {% endif %}
                   <label class="form-label" for="password">Password</label>
                   <div class="input-group input-group-merge">
@@ -98,11 +98,11 @@
                 </div>
                 <div class="mb-3 form-password-toggle">
                 {% if form.password2.errors %}
-                    <ol>
+                    <ul>
                     {% for error in form.password2.errors %}
                         <li><strong>{{ error|escape }}</strong></li>
                     {% endfor %}
-                    </ol>
+                    </ul>
                 {% endif %}
                   <label class="form-label" for="password">Confirm Password</label>
                   <div class="input-group input-group-merge">
