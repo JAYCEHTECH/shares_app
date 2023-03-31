@@ -14,7 +14,7 @@
               <h4 class="mb-2">Adventure starts here 🚀</h4>
               <p class="mb-4">Sign up and manage your own space!</p>
                 <hr>
-                {{% for field in form %}
+                {% for field in form %}
                     <div class="fieldWrapper">
                         {{ field.errors }}
                         {{ field.label_tag }} {{ field }}
