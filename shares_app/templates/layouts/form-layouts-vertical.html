@@ -36,7 +36,7 @@
                       <small class="text-muted float-end">Flexi Bundle</small>
                     </div>
                     <div class="card-body">
-                      <form class="bundle-form" method="post">
+                      <form class="bundle-form">
                           {% csrf_token %}
                         <div class="mb-3">
                           <label class="form-label" for="basic-icon-default-p">Phone Number</label>
@@ -47,7 +47,7 @@
                             <input
                               type="text"
                               class="form-control"
-                              id="basic-icon-default-fullname"
+                              id="phone"
                               placeholder="0270000000"
                               aria-label="0270000000"
                               aria-describedby="basic-icon-default-fullname2"
@@ -66,7 +66,7 @@
                             ></span>
                             <input
                               type="text"
-                              id="basic-icon-default-company"
+                              id="amount"
                               class="form-control"
                               placeholder="5000MB"
                               aria-label="5000MB"
@@ -76,8 +76,14 @@
                             />
                           </div>
                         </div>
-                        <input type="submit" class="btn btn-primary send-btn" value="Send"/>
                       </form>
+                        <div style="height: auto">
+                            <button class="btn btn-primary send-btn">
+                                Send
+                            </button>
+                            <div style="background-color: #696cff" class="spinner" role="status">
+                          </div>
+                        </div>
                     </div>
                   </div>
                 </div>

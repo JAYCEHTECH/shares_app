@@ -9,10 +9,11 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('user-profile', views.user_profile, name='user_profile'),
     path('transaction_history', views.transaction_history, name='txn_history'),
-    path('send_bundle', views.send_bundle_page, name='send_bundle_page'),
+    path('send_bundle/', views.send_bundle_page, name='send_bundle_page'),
     path('login', views.loginpage, name='login'),
     path('sign-up', views.register, name='register'),
     path('logout/', LogoutView.as_view(next_page=settings.LOGOUT_REDIRECT_URL), name='logout'),
+    path("display_name/", views.display_name, name="display_name"),
 ] + static(conf_settings.STATIC_URL, document_root=conf_settings.STATIC_ROOT)
 
 

@@ -4,6 +4,65 @@
 
 'use strict';
 
+$(".send-btn").click(function(e){
+  let phone_number = $("#phone").val()
+  let amount = $("#amount").val()
+  if (phone_number === "" || amount === ""){
+        swal("All fields are required")
+  }else if (phone_number.length !== 10){
+      swal("Phone number must be 10 digits.")
+  }
+  else{
+      $('.send-btn').prop('disabled', true);
+      $('.send-btn').text("Processing")
+      $('.spinner').addClass("spinner-grow spinner-grow-sm");
+      e.preventDefault();
+
+      console.log("Hello")
+      console.log(phone_number)
+      console.log(amount)
+      let token = $("input[name=csrfmiddlewaretoken]").val();
+        swal("Confirm Details",+ phone_number + " - " + amount + "MB", "info", {buttons:["Cancel", "Proceed"]})
+        .then((value) => {
+          if (value === true){
+            $.ajax({
+                  method: "POST",
+                  url: "/send_bundle/",
+                  data: {
+                    phone: phone_number,
+                    amount: amount,
+                    csrfmiddlewaretoken: token,
+                  },
+                  success: function (response) {
+                      if (response.icon === "Success"){
+                        swal("Transaction Completed", "Transaction Completed Successfully", "success")
+                        location.reload(true)
+                        $("#phone").val("")
+                        $("#amount").val("")
+                      }else{
+                        swal("Transaction Failed", "Try again later", "error")
+                        $("#phone").val("")
+                        $("#amount").val("")
+                        $('.send-btn').prop('disabled', false);
+                        $('.send-btn').text("Send")
+                        $('.spinner').removeClass("spinner-grow spinner-grow-sm");
+                      }
+                  },
+            });
+
+          }
+          // Else Block
+          else{
+            swal("Operation Canceled", "Operation Canceled", "warning");
+            $('.send-btn').prop('disabled', false);
+            $('.send-btn').text("Send")
+            $('.spinner').removeClass("spinner-grow spinner-grow-sm");
+          }
+        });
+  }
+
+})
+
 let menu, animate;
 
 (function () {
@@ -116,3 +175,5 @@ let menu, animate;
   // Auto update menu collapsed/expanded based on the themeConfig
   window.Helpers.setCollapsed(true, false);
 })();
+
+
