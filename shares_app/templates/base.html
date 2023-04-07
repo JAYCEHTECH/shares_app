@@ -133,7 +133,9 @@
     </script>
 
       <script>
-          let table = new DataTable('#txnTable');
+          let table = $('#txnTable').DataTable({
+              "ordering": false
+          });
       </script>
 
     <!--Start of Tawk.to Script-->
