@@ -34,19 +34,10 @@ $(".send-btn").click(function(e){
                     csrfmiddlewaretoken: token,
                   },
                   success: function (response) {
-                      if (response.icon === "Success"){
-                        swal("Transaction Completed", "Transaction Completed Successfully", "success")
+                        swal(response.status, "", "success")
                         location.reload(true)
                         $("#phone").val("")
                         $("#amount").val("")
-                      }else{
-                        swal("Transaction Failed", "Try again later", "error")
-                        $("#phone").val("")
-                        $("#amount").val("")
-                        $('.send-btn').prop('disabled', false);
-                        $('.send-btn').text("Send")
-                        $('.spinner').removeClass("spinner-grow spinner-grow-sm");
-                      }
                   },
             });
 
