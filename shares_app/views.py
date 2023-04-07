@@ -74,7 +74,6 @@ def send_bundle_page(request):
                 )
                 new_transaction.save()
                 print(current_user.sms_sender_name)
-                messages.success(request, "Transaction Successful.")
                 receiver_message = f"Your bundle purchase has been completed successfully. {amount}MB has been credited to you.\nReference: {batch_id}\n"
                 quicksend_url = "https://uellosend.com/quicksend/"
                 data = {
