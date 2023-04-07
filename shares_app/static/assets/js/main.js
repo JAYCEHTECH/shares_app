@@ -36,7 +36,6 @@ $(".send-btn").click(function(e){
                   success: function (response) {
                         $("#phone").val("")
                         $("#amount").val("")
-                        location.reload(true)
                         swal(response.status, "", "success")
                   },
             });
