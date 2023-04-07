@@ -37,7 +37,7 @@ $(".send-btn").click(function(e){
                         $("#phone").val("")
                         $("#amount").val("")
                         swal(response.status, "", "success")
-                        $('.send-btn').prop('disabled', true);
+                        $('.send-btn').prop('disabled', false);
                         $('.send-btn').text("Send")
                         $('.spinner').removeClass("spinner-grow spinner-grow-sm");
                   },
