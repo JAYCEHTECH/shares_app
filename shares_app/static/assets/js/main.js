@@ -34,9 +34,10 @@ $(".send-btn").click(function(e){
                     csrfmiddlewaretoken: token,
                   },
                   success: function (response) {
-                        swal(response.status, "", "success")
                         $("#phone").val("")
                         $("#amount").val("")
+                        location.reload(true)
+                        swal(response.status, "", "success")
                   },
             });
 
