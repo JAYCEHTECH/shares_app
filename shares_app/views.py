@@ -88,7 +88,6 @@ def send_bundle_page(request):
 
                 response = requests.post(quicksend_url, headers=headers, json=data)
                 print(response.json())
-                return JsonResponse({'status': "Transaction Successful", "icon": "Success"})
             else:
                 new_transaction = models.TransactionHistory.objects.create(
                     user=request.user,
