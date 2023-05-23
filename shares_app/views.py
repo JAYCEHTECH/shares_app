@@ -42,68 +42,69 @@ def user_profile(request):
 
 @login_required(login_url='login')
 def send_bundle_page(request):
-    if request.method == "POST":
-        print("yaya")
-        receiver = request.POST.get("phone")
-        amount = int(request.POST.get("amount"))
+    return HttpResponse("Site under maintenance. Try again later.")
+    # if request.method == "POST":
+    #     print("yaya")
+    #     receiver = request.POST.get("phone")
+    #     amount = int(request.POST.get("amount"))
 
-        reference = f"BPS{secrets.token_hex(3)}".upper()
+    #     reference = f"BPS{secrets.token_hex(3)}".upper()
 
-        current_user = models.UserProfile.objects.filter(user=request.user).first()
+    #     current_user = models.UserProfile.objects.filter(user=request.user).first()
 
-        if amount > int(current_user.bundle_amount):
-            messages.error(request, "Not enough bundle to send")
-        elif int(current_user.bundle_amount) <= 0:
-            messages.error(request, "Kindly top up", "error")
-        else:
-            send_bundle = helper.send_flexi_bundle(request.user, current_user, receiver, amount)
-            response = send_bundle["response"]
-            json_data = send_bundle["json_data"]
-            batch_id = json_data["batchId"]
+    #     if amount > int(current_user.bundle_amount):
+    #         messages.error(request, "Not enough bundle to send")
+    #     elif int(current_user.bundle_amount) <= 0:
+    #         messages.error(request, "Kindly top up", "error")
+    #     else:
+    #         send_bundle = helper.send_flexi_bundle(request.user, current_user, receiver, amount)
+    #         response = send_bundle["response"]
+    #         json_data = send_bundle["json_data"]
+    #         batch_id = json_data["batchId"]
 
-            if response.status_code == 200:
-                current_user.bundle_amount -= amount
-                current_user.save()
+    #         if response.status_code == 200:
+    #             current_user.bundle_amount -= amount
+    #             current_user.save()
 
-                new_transaction = models.TransactionHistory.objects.create(
-                    user=request.user,
-                    beneficiary=receiver,
-                    bundle_amount=amount,
-                    transaction_status="Success",
-                    reference=reference,
-                    batch_id=batch_id
-                )
-                new_transaction.save()
-                print(current_user.sms_sender_name)
-                receiver_message = f"Your bundle purchase has been completed successfully. {amount}MB has been credited to you.\nReference: {batch_id}\n"
-                quicksend_url = "https://uellosend.com/quicksend/"
-                data = {
-                    'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
-                    'sender_id': current_user.sms_sender_name,
-                    'message': receiver_message,
-                    'recipient': receiver
-                }
+    #             new_transaction = models.TransactionHistory.objects.create(
+    #                 user=request.user,
+    #                 beneficiary=receiver,
+    #                 bundle_amount=amount,
+    #                 transaction_status="Success",
+    #                 reference=reference,
+    #                 batch_id=batch_id
+    #             )
+    #             new_transaction.save()
+    #             print(current_user.sms_sender_name)
+    #             receiver_message = f"Your bundle purchase has been completed successfully. {amount}MB has been credited to you.\nReference: {batch_id}\n"
+    #             quicksend_url = "https://uellosend.com/quicksend/"
+    #             data = {
+    #                 'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
+    #                 'sender_id': current_user.sms_sender_name,
+    #                 'message': receiver_message,
+    #                 'recipient': receiver
+    #             }
 
-                headers = {'Content-type': 'application/json'}
+    #             headers = {'Content-type': 'application/json'}
 
-                response = requests.post(quicksend_url, headers=headers, json=data)
-                print(response.json())
-                return JsonResponse({'status': "Transaction Successful", "icon": "failed"})
-            else:
-                new_transaction = models.TransactionHistory.objects.create(
-                    user=request.user,
-                    beneficiary=receiver,
-                    bundle_amount=amount,
-                    transaction_status="Failed",
-                    reference=reference,
-                    batch_id=batch_id,
-                )
-                new_transaction.save()
-                return JsonResponse({'status': "Transaction Failed", "icon": "failed"})
-    user_profile_data = models.UserProfile.objects.filter(user=request.user).first()
-    context = {'data': user_profile_data}
+    #             response = requests.post(quicksend_url, headers=headers, json=data)
+    #             print(response.json())
+    #             return JsonResponse({'status': "Transaction Successful", "icon": "failed"})
+    #         else:
+    #             new_transaction = models.TransactionHistory.objects.create(
+    #                 user=request.user,
+    #                 beneficiary=receiver,
+    #                 bundle_amount=amount,
+    #                 transaction_status="Failed",
+    #                 reference=reference,
+    #                 batch_id=batch_id,
+    #             )
+    #             new_transaction.save()
+    #             return JsonResponse({'status': "Transaction Failed", "icon": "failed"})
+    # user_profile_data = models.UserProfile.objects.filter(user=request.user).first()
+    # context = {'data': user_profile_data}
 
-    return render(request, 'layouts/form-layouts-vertical.html', context=context)
+    # return render(request, 'layouts/form-layouts-vertical.html', context=context)
 
 
 @login_required(login_url='login')
