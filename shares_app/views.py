@@ -12,12 +12,13 @@ from shares_app.forms import CustomUserForm
 
 
 # Create your views here.
-@login_required(login_url='login')
+# @login_required(login_url='login')
 def home(request):
-    user_profile_data = models.UserProfile.objects.filter(user=request.user).first()
-    transactions_count = models.TransactionHistory.objects.filter(user=request.user).count()
-    context = {'data': user_profile_data, 'count': transactions_count}
-    return render(request, 'layouts/index.html', context=context)
+    return HttpResponse("Site under maintenance. Try again later.")
+    # user_profile_data = models.UserProfile.objects.filter(user=request.user).first()
+    # transactions_count = models.TransactionHistory.objects.filter(user=request.user).count()
+    # context = {'data': user_profile_data, 'count': transactions_count}
+    # return render(request, 'layouts/index.html', context=context)
 
 
 @login_required(login_url='login')
