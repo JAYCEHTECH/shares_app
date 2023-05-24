@@ -2,19 +2,130 @@ import json
 
 import requests
 from decouple import config
+from rest_framework import status
+from rest_framework.response import Response
+
+from . import models
+from .api import api_views
 
 
-def send_flexi_bundle(current_user, user_details, receiver, bundle):
+def send_flexi_bundle(request, user_details, current_user, receiver, bundle, reference):
+    response = api_views.ValidateAPIKeysView().post(request).data
+    if response["valid"]:
+        user_transactions = models.NewTransaction.objects.filter(user=user_details)
+        for transaction in user_transactions:
+            if transaction.reference == reference:
+                return Response(data={"code": "0001", "status": "Failed", "error": "Duplicate Error",
+                                      "message": "Transaction reference already exists"},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        url = "https://backend.boldassure.net:445/live/api/context/business/transaction/new-transaction"
+
+        payload = json.dumps({
+            "accountNo": current_user.phone,
+            "accountFirstName": user_details.first_name,
+            "accountLastName": user_details.last_name,
+            "accountMsisdn": receiver,
+            "accountEmail": user_details.email,
+            "accountVoiceBalance": 0,
+            "accountDataBalance": bundle,
+            "accountCashBalance": 0,
+            "active": True
+        })
+
+        headers = {
+            'Authorization': config("BEARER_TOKEN"),
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        data = response.json()
+
+        if response.status_code == 200:
+            batch_id = data["batchId"]
+            new_transaction = models.NewTransaction.objects.create(
+                user=user_details,
+                reference=reference,
+                batch_id=batch_id,
+                receiver=receiver,
+                account_number=current_user.phone,
+                first_name=user_details.first_name,
+                last_name=user_details.last_name,
+                account_email=user_details.email,
+                bundle_amount=bundle,
+                transaction_status="Completed"
+            )
+            new_transaction.save()
+            current_user.bundle_amount -= bundle
+            current_user.save()
+            return Response(
+                data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
+                      "reference": reference}, status=status.HTTP_200_OK)
+        else:
+            new_transaction = models.NewTransaction.objects.create(
+                user=user_details,
+                reference=reference,
+                receiver=receiver,
+                account_number=current_user.phone,
+                first_name=user_details.first_name,
+                last_name=user_details.last_name,
+                account_email=user_details.email,
+                bundle_amount=bundle,
+                transaction_status="Failed"
+            )
+            new_transaction.save()
+            return Response(data={"code": "0001", "status": "Failed", "error": "Transaction not successful",
+                                  "message": "Transaction could not be processed. Try again later."},
+                            status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(data={"code": "0001", "error": "Authentication error", "status": "Failed",
+                              "message": "Unable to authenticate using Authentication keys. Check and try again."},
+                        status=status.HTTP_401_UNAUTHORIZED)
+    # response = api_views.NewTransactionView()
+    # response.setup(request).
+    #
+    # # url = "https://console.bestpaygh.com/api/flexi/v1/new_transaction/"
+    # # print(user_details.first_name)
+    # # print(type(user_details.first_name))
+    # # print(current_user.phone)
+    # # print(type(current_user.phone))
+    # # print(bundle)
+    # # print(user_details.email)
+    # #
+    # # payload =
+    # json.dumps({
+    #     "first_name": user_details.first_name,
+    #     "last_name": user_details.last_name,
+    #     "account_number": current_user.phone,
+    #     "receiver": str(receiver),
+    #     "account_email": user_details.email,
+    #     "reference": reference,
+    #     "bundle_amount": bundle
+    # })
+    # # headers = {
+    # #     'api-key': user_details.api_key,
+    # #     'api-secret': user_details.api_secret,
+    # #     'Content-Type': 'application/json',
+    # # }
+    # #
+    # # response = requests.request("POST", url, headers=headers, data=payload)
+    # # print("posted in send flexi bundle")
+    # # print(response.json())
+    # print(response)
+    # return response
+
+
+def api_send_bundle(data):
     url = "https://backend.boldassure.net:445/live/api/context/business/transaction/new-transaction"
 
     payload = json.dumps({
-        "accountNo": f"233{str(user_details.phone)}",
-        "accountFirstName": current_user.first_name,
-        "accountLastName": current_user.last_name,
-        "accountMsisdn": str(receiver).strip(),
-        "accountEmail": current_user.email,
+        "accountNo": data["account_number"],
+        "accountFirstName": data["first_name"],
+        "accountLastName": data["last_name"],
+        "accountMsisdn": data["receiver"],
+        "accountEmail": data["account_email"],
         "accountVoiceBalance": 0,
-        "accountDataBalance": float(bundle),
+        "accountDataBalance": data["bundle_amount"],
         "accountCashBalance": 0,
         "active": True
     })
@@ -25,15 +136,11 @@ def send_flexi_bundle(current_user, user_details, receiver, bundle):
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
-    json_data = response.json()
-    print(json_data)
-    print(json_data)
-    return {'response': response, 'json_data': json_data}
+    return response
 
 
-def verify_bundle_txn(batch_id):
-
-    url = f"https://backend.boldassure.net:445/live/api/context/business/airteltigo-gh/ishare/tranx-status/{str(batch_id)}"
+def api_verify_transaction(batch_id):
+    url = f"https://backend.boldassure.net:445/live/api/context/business/airteltigo-gh/ishare/tranx-status/{batch_id}"
 
     payload = {}
     headers = {
@@ -43,6 +150,18 @@ def verify_bundle_txn(batch_id):
     response = requests.request("GET", url, headers=headers, data=payload)
     print(response.json())
     return response.json()
+
+
+def verify_bundle_txn(batch_id):
+    url = f"https://backend.boldassure.net:445/live/api/context/business/airteltigo-gh/ishare/tranx-status/{str(batch_id)}"
+
+    payload = {}
+    headers = {
+        'Authorization': config("BEARER_TOKEN")
+    }
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    return response
 
 
 def check_network(phone_number):

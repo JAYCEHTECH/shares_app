@@ -1,7 +1,7 @@
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
-            <a href="index.html" class="app-brand-link">
-              BestPay
+            <a href="{% url 'home' %}" class="app-brand-link fw-bold">
+              The BestPay Console
             </a>
 
             <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -28,6 +28,21 @@
               </a>
             </li>
 
+            <li class="menu-item {% if request.resolver_match.url_name == 'api_mgt' %}active{% endif %}">
+              <a href="{% url 'api_mgt' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-key"></i>
+                <div data-i18n="Boxicons">API</div>
+              </a>
+            </li>
+
+          {% if request.user.is_staff %}
+          <li class="menu-item {% if request.resolver_match.url_name == 'crediting' %}active{% endif %}">
+              <a href="{% url 'crediting' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-money"></i>
+                <div data-i18n="Boxicons">Credit Users</div>
+              </a>
+            </li>
+        {% endif %}
 
             <!-- Forms & Tables -->
             <li class="menu-header small text-uppercase"><span class="menu-header-text">Transactions</span></li>
@@ -45,6 +60,29 @@
                 <div data-i18n="Tables">Transaction History</div>
               </a>
             </li>
+
+          <li class="menu-item {% if request.resolver_match.url_name == 'credit-history' %}active{% endif %}">
+              <a href="{% url 'credit-history' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-table"></i>
+                <div data-i18n="Tables">Credit History</div>
+              </a>
+            </li>
+
+          <li class="menu-item {% if request.resolver_match.url_name == 'query_transaction' %}active{% endif %}">
+              <a href="{% url 'query_transaction' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-search"></i>
+                <div data-i18n="Tables">Query Transaction</div>
+              </a>
+            </li>
+
+                    {% if request.user.is_staff %}
+          <li class="menu-item {% if request.resolver_match.url_name == 'all_transactions' %}active{% endif %}">
+              <a href="{% url 'all_transactions' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-globe"></i>
+                <div data-i18n="Boxicons">All Transactions</div>
+              </a>
+            </li>
+        {% endif %}
             <!-- Misc -->
             <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
             <li class="menu-item">

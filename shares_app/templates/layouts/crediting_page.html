@@ -22,40 +22,29 @@
             <!-- Content -->
 
             <div class="container-xxl flex-grow-1 container-p-y">
-              <h4 class="fw-bold py-3 mb-4">Send Bundle</h4>
+              <h4 class="fw-bold py-3 mb-4">Credit Users</h4>
 
               <!-- Basic Layout -->
               <div class="row">
                 <div class="col-xl">
-                    <lottie-player class="my-auto mx-auto" src="https://assets2.lottiefiles.com/packages/lf20_benzmfne.json"  background="transparent"  speed="1"  style="width: 400px; height: 300px;"  loop  autoplay></lottie-player>
+                    <lottie-player class="my-auto mx-auto" src="https://assets9.lottiefiles.com/packages/lf20_mwcetj92.json"  background="transparent"  speed="1"  style="width: 400px; height: 300px;"  loop  autoplay></lottie-player>
                 </div>
                 <div class="col-xl">
                   <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                      <h5 class="mb-0">Bundle Form</h5>
-                      <small class="text-muted float-end">Bundle Left: {{ data.bundle_amount}}MB</small>
+                      <h5 class="mb-0">Crediting Form</h5>
+                      <small class="text-muted float-end">Credit users account with bundle</small>
                     </div>
                     <div class="card-body">
-                      <form class="bundle-form">
+                      <form method="post">
                           {% csrf_token %}
                         <div class="mb-3">
-                          <label class="form-label" for="basic-icon-default-p">Phone Number</label>
+                          <label class="form-label" for="basic-icon-default-p">User</label>
                           <div class="input-group input-group-merge">
                             <span id="basic-icon-default-fullname2" class="input-group-text"
-                              ><i class="bx bx-phone"></i
+                              ><i class="bx bx-user"></i
                             ></span>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="phone"
-                              placeholder="0270000000"
-                              aria-label="0270000000"
-                              aria-describedby="basic-icon-default-fullname2"
-                              name="phone"
-                              min="10"
-                              max="10"
-                              required
-                            />
+                            {{ form.user }}
                           </div>
                         </div>
                         <div class="mb-3">
@@ -64,26 +53,13 @@
                             <span id="basic-icon-default-company2" class="input-group-text"
                               ><i class="bx bx-money"></i
                             ></span>
-                            <input
-                              type="text"
-                              id="amount"
-                              class="form-control"
-                              placeholder="5000MB"
-                              aria-label="5000MB"
-                              aria-describedby="basic-icon-default-company2"
-                              name="amount"
-                              required
-                            />
+                            {{ form.credit_amount }}
                           </div>
                         </div>
+                        <button type="submit" class="btn btn-primary">
+                            Credit
+                        </button>
                       </form>
-                        <div style="height: auto">
-                            <button class="btn btn-primary send-btn">
-                                Send
-                            </button>
-                            <div style="background-color: #696cff" class="spinner" role="status">
-                          </div>
-                        </div>
                     </div>
                   </div>
                 </div>

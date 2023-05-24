@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
+from shares_app import models
 from shares_app.models import CustomUser
 
 
@@ -19,4 +20,16 @@ class CustomUserForm(UserCreationForm):
         fields = ['first_name', 'last_name', 'username', 'business_name', 'email', 'phone', 'password1', 'password2']
 
 
+class CreditingForm(forms.ModelForm):
+    user = forms.ModelChoiceField(queryset=models.CustomUser.objects.filter(is_staff=False), widget=forms.Select(attrs={"class": "form-control"}))
+    credit_amount = forms.FloatField(widget=forms.NumberInput(attrs={"class": "form-control"}))
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     for visible in self.visible_fields():
+    #         visible.field.widget.attrs['class'] = 'form-control'
+    #         visible.field.widget.attrs['placeholder'] = visible.field.label
+    #
+    class Meta:
+        model = models.CreditingHistory
+        fields = ['user', 'credit_amount']
 

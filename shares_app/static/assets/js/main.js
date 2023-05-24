@@ -4,6 +4,8 @@
 
 'use strict';
 
+
+
 $(".send-btn").click(function(e){
   let phone_number = $("#phone").val()
   let amount = $("#amount").val()
@@ -36,7 +38,7 @@ $(".send-btn").click(function(e){
                   success: function (response) {
                         $("#phone").val("")
                         $("#amount").val("")
-                        swal(response.status, "", "success")
+                        swal("", response.status, response.icon)
                         $('.send-btn').prop('disabled', false);
                         $('.send-btn').text("Send")
                         $('.spinner').removeClass("spinner-grow spinner-grow-sm");

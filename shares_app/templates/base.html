@@ -120,6 +120,8 @@
     {% for msg in messages %}
         {% if msg.tags == "success" %}
         swal("{{ msg }}", {button: "Ok", icon:"success"});
+        {% elif msg.tags == "info" %}
+        swal("{{ msg }}", {button: "Ok", icon:"warning", type:"info"},);
         {% else %}
         swal("{{ msg }}", {button: "Ok", icon:"error"});
         {% endif %}
@@ -151,5 +153,59 @@
     })();
     </script>
     <!--End of Tawk.to Script-->
+
+      <script>
+          function myFunction() {
+  // Get the text field
+  var copyText = $("#api").text();
+  var copied = document.getElementsByClassName("copied")[0]
+              console.log(copied)
+  console.log(copyText)
+
+
+  // Copy the text inside the text field
+  navigator.clipboard.writeText(copyText);
+  copied.style.display = "inline";
+
+
+  // Alert the copied text
+}
+      </script>
+
+        <script>
+          function myFunction2() {
+  // Get the text field
+  var copyText = $("#secret").text();
+  var copied = document.getElementsByClassName("copied2")[0]
+              console.log(copied)
+  console.log(copyText)
+
+
+  // Copy the text inside the text field
+  navigator.clipboard.writeText(copyText);
+  copied.style.display = "inline";
+
+
+  // Alert the copied text
+}
+      </script>
+
+          <script>
+          function myFunction3() {
+  // Get the text field
+  let mask = $("#api-secret-mask")[0]
+  let secret = $("#api-secret")[0]
+
+
+
+  // Copy the text inside the text field
+  mask.style.display = "none"
+  secret.style.display = "inline-block"
+
+
+  // Alert the copied text
+}
+      </script>
+
   </body>
 </html>

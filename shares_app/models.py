@@ -11,6 +11,15 @@ class CustomUser(AbstractUser):
     email = models.EmailField(max_length=250, null=False, blank=False)
     password1 = models.CharField(max_length=100, null=False, blank=False)
     password2 = models.CharField(max_length=100, null=False, blank=False)
+    api_key = models.CharField(max_length=120, blank=True, null=True)
+    api_secret = models.CharField(max_length=140, blank=True, null=True)
+    api_revoked = models.BooleanField(default=False)
+
+    def has_valid_api_secret(self, secret_key: str) -> bool:
+        return self.api_secret == secret_key
+
+    def __str__(self):
+        return self.username
 
 
 class UserProfile(models.Model):
@@ -24,18 +33,30 @@ class UserProfile(models.Model):
         return f"{self.user.username}"
 
 
-class TransactionHistory(models.Model):
+class NewTransaction(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    beneficiary = models.PositiveBigIntegerField(blank=False, null=False)
-    bundle_amount = models.PositiveIntegerField(blank=False, null=False)
+    account_number = models.CharField(max_length=200, blank=False, null=False)
+    first_name = models.CharField(max_length=200, blank=False, null=False)
+    last_name = models.CharField(max_length=200, blank=False, null=False)
+    account_email = models.EmailField(max_length=200, blank=False, null=False)
+    receiver = models.CharField(max_length=200, blank=False, null=False)
     reference = models.CharField(max_length=100, blank=False, null=False, default="Failed")
-    batch_id = models.CharField(max_length=100, blank=False, null=False, default="Failed")
+    bundle_amount = models.FloatField(blank=False, null=False)
     transaction_date = models.DateTimeField(auto_now_add=True)
-    transaction_status = models.CharField(max_length=100, blank=False, null=False)
-    transaction_status_message = models.CharField(max_length=400, blank=True, null=True)
+    transaction_status = models.CharField(max_length=100, blank=False, null=False, default="Failed")
+    batch_id = models.CharField(max_length=100, blank=False, null=False, default="Failed")
 
     def __str__(self):
-        return f"{self.user.username}"
+        return self.first_name + " " + self.receiver
+
+
+class CreditingHistory(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    amount_credited = models.FloatField(null=False, blank=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username + " " + str(self.amount_credited)
 
 
 class AuthorizationCodes(models.Model):
