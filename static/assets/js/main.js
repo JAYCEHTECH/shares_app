@@ -1,5 +1,5 @@
 
-alert("hello")
+
 
 $(".send-btn").click(function(e){
   let phone_number = $("#phone").val()
