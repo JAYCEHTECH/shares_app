@@ -1,6 +1,4 @@
 
-'use strict';
-
 alert("hello")
 
 $(".send-btn").click(function(e){
