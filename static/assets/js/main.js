@@ -1,6 +1,3 @@
-/**
- * Main
- */
 
 'use strict';
 
