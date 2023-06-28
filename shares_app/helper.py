@@ -33,6 +33,13 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
             "active": True
         })
 
+        print(current_user.phone)
+        print(user_details.first_name)
+        print(user_details.last_name)
+        print(receiver)
+        print(user_details.email)
+        print(bundle)
+
         headers = {
             'Authorization': config("BEARER_TOKEN"),
             'Content-Type': 'application/json'
@@ -40,7 +47,8 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
 
         response = requests.request("POST", url, headers=headers, data=payload)
         data = response.json()
-
+        print(data)
+        print("helper")
         if response.status_code == 200:
             batch_id = data["batchId"]
             new_transaction = models.NewTransaction.objects.create(
@@ -71,9 +79,11 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
                 last_name=user_details.last_name,
                 account_email=user_details.email,
                 bundle_amount=bundle,
+                batch_id="Failed!",
                 transaction_status="Failed"
             )
             new_transaction.save()
+            print("ishare fail")
             return Response(data={"code": "0001", "status": "Failed", "error": "Transaction not successful",
                                   "message": "Transaction could not be processed. Try again later."},
                             status=status.HTTP_400_BAD_REQUEST)
