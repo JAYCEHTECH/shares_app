@@ -65,12 +65,12 @@ def send_bundle_page(request):
             print(data)
             message = data["message"]
             if data["status"] == "Success":
-                new_current_user = models.UserProfile.objects.filter(user=request.user).first()
+                new_current_user = models.UserProfile.objects.get(user=request.user)
                 receiver_message = f"Transaction was completed successfully.\nReference: {reference}\nAmount: {amount}MB"
                 quicksend_url = "https://uellosend.com/quicksend/"
                 data = {
                     'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
-                    'sender_id': "BESTPAY GH",
+                    'sender_id': new_current_user.sms_sender_name,
                     'message': receiver_message,
                     'recipient': receiver
                 }
