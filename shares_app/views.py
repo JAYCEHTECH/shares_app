@@ -67,18 +67,42 @@ def send_bundle_page(request):
             if data["status"] == "Success":
                 new_current_user = models.UserProfile.objects.get(user=request.user)
                 receiver_message = f"Transaction was completed successfully.\nReference: {reference}\nAmount: {amount}MB"
-                quicksend_url = "https://uellosend.com/quicksend/"
-                data = {
-                    'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
-                    'sender_id': new_current_user.sms_sender_name,
-                    'message': receiver_message,
-                    'recipient': receiver
-                }
 
-                headers = {'Content-type': 'application/json'}
+                if not new_current_user.sms_api or new_current_user.sms_api is None:
+                    # quicksend_url = "https://uellosend.com/quicksend/"
+                    # data = {
+                    #     'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
+                    #     'sender_id': new_current_user.sms_sender_name,
+                    #     'message': receiver_message,
+                    #     'recipient': receiver
+                    # }
+                    #
+                    # headers = {'Content-type': 'application/json'}
+                    #
+                    # response = requests.post(quicksend_url, headers=headers, json=data)
+                    # print(response.json())
 
-                response = requests.post(quicksend_url, headers=headers, json=data)
-                print(response.json())
+                    sms_url = f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to={receiver}&from={new_current_user.sms_sender_name}&sms={receiver_message}"
+                    response = requests.request("GET", url=sms_url)
+                    print(response.status_code)
+                    print(response.text)
+                else:
+                    sms_headers = {
+                        'Authorization': new_current_user.sms_api,
+                        'Content-Type': 'application/json'
+                    }
+
+                    sms_url = 'https://webapp.usmsgh.com/api/sms/send'
+
+                    receiver_body = {
+                        'recipient': receiver,
+                        'sender_id': new_current_user.sms_sender_name,
+                        'message': receiver_message
+                    }
+
+                    response = requests.request('POST', url=sms_url, params=receiver_body, headers=sms_headers)
+                    print(response.text)
+
                 return JsonResponse({'status': message, "icon": "success"})
             else:
                 return JsonResponse({'status': message, "icon": "error"})
