@@ -90,7 +90,7 @@ def send_bundle_page(request):
                     print(new_current_user.sms_api)
                     print(type(new_current_user.sms_api))
                     sms_headers = {
-                        'Authorization': str(new_current_user.sms_api),
+                        'Authorization': f"{new_current_user.sms_api}",
                         'Content-Type': 'application/json'
                     }
 
