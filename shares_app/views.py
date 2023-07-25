@@ -87,15 +87,20 @@ def send_bundle_page(request):
                     print(response.status_code)
                     print(response.text)
                 else:
+                    print(new_current_user.sms_api)
+                    print(type(new_current_user.sms_api))
                     sms_headers = {
                         'Authorization': new_current_user.sms_api,
                         'Content-Type': 'application/json'
                     }
 
                     sms_url = 'https://webapp.usmsgh.com/api/sms/send'
+                    receiver_without_0 = receiver[1:]
+                    print(receiver)
+                    print(receiver_without_0)
 
                     receiver_body = {
-                        'recipient': receiver,
+                        'recipient': f"233{receiver_without_0}",
                         'sender_id': new_current_user.sms_sender_name,
                         'message': receiver_message
                     }
