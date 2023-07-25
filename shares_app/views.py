@@ -89,21 +89,11 @@ def send_bundle_page(request):
                 else:
                     print(new_current_user.sms_api)
                     print(type(new_current_user.sms_api))
-                    if new_current_user.sms_sender_name == "Noble Data":
-                        sms_headers = {
-                            'Authorization': 'Bearer 1050|VDqcCUHwCBEbjcMk32cbdOhCFlavpDhy6vfgM4jU',
-                            'Content-Type': 'application/json'
-                        }
-                    elif new_current_user.sms_sender_name == "Cleda Data":
-                        sms_headers = {
-                            'Authorization': "Bearer 1052|j8KzPxKx2czsREkXmiry2UqnT855784gx3EospVW",
-                            'Content-Type': 'application/json'
-                        }
-                    elif new_current_user.sms_sender_name == "bestpay":
-                        sms_headers = {
-                            'Authorization': 'Bearer 7|xs6pv2dspHJq8sWLhrpNFH5YLilMRQcVxLwSw2Sd',
-                            'Content-Type': 'application/json'
-                        }
+                    sms_headers = {
+                        'Authorization': str(new_current_user.sms_api),
+                        'Content-Type': 'application/json'
+                    }
+
                     sms_url = 'https://webapp.usmsgh.com/api/sms/send'
                     receiver_without_0 = receiver[1:]
                     print(receiver)
