@@ -106,7 +106,7 @@ def send_bundle_page(request):
                     }
 
                     response = requests.request('POST', url=sms_url, params=receiver_body, headers=sms_headers)
-                    print(response.text)
+                    print(response.json())
 
                 return JsonResponse({'status': message, "icon": "success"})
             else:
