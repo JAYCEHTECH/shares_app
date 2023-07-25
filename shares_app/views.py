@@ -66,7 +66,7 @@ def send_bundle_page(request):
             message = data["message"]
             if data["status"] == "Success":
                 new_current_user = models.UserProfile.objects.get(user=request.user)
-                receiver_message = f"Transaction was completed successfully.\nReference: {reference}\nAmount: {amount}MB"
+                receiver_message = f"Your transaction was completed successfully.\nYour account with number {receiver} has been credited with {amount}MB\nReference: {reference}.\n\n{new_current_user.sms_sender_name.title()}"
 
                 if not new_current_user.sms_api or new_current_user.sms_api is None:
                     # quicksend_url = "https://uellosend.com/quicksend/"
