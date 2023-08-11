@@ -23,6 +23,7 @@ class CreditingHistoryAdmin(admin.ModelAdmin):
 
 
 class NewTransactionAdmin(admin.ModelAdmin):
+    list_per_page = 2000
     list_display = ["user", "receiver", "reference", "bundle_amount", "batch_id", "transaction_date", "transaction_status"]
     search_fields = ["receiver", 'reference', "bundle_amount", "batch_id"]
 
