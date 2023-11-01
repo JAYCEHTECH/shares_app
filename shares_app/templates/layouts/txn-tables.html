@@ -57,9 +57,7 @@
                             </td>
                             <td>{{ txn.reference }}</td>
                             <td>{{ txn.batch_id }}</td>
-                          {% if request.user.is_superuser %}
                             <td><a href="{% url 'fix_transaction' ref=txn.reference %}" class="btn btn-sm btn-success">Fix Txn</a></td>
-                          {% endif %}
                           </tr>
                         {% endfor %}
                     {% else %}

@@ -343,104 +343,100 @@ def all_transactions(request):
 
 @login_required(login_url='login')
 def fix_transaction(request, ref):
-    if request.user.is_staff and request.user.is_superuser:
-        current_user = models.UserProfile.objects.filter(user=request.user).first()
-        transaction_referenced = models.NewTransaction.objects.filter(reference=ref).first()
-        number = transaction_referenced.receiver
-        batch_id = transaction_referenced.batch_id
+    current_user = models.UserProfile.objects.filter(user=request.user).first()
+    transaction_referenced = models.NewTransaction.objects.filter(reference=ref).first()
+    number = transaction_referenced.receiver
+    batch_id = transaction_referenced.batch_id
 
-        print(number)
-        print(batch_id)
+    print(number)
+    print(batch_id)
 
-        if batch_id == "Failed":
-            print("moving on to send")
-            response = helper.send_flexi_bundle(request, request.user, current_user, number,
-                                                transaction_referenced.bundle_amount, ref, "fixing")
-            data = response.data
-            print(data)
-            message = data["message"]
-            if data["status"] == "Success":
-                new_current_user = models.UserProfile.objects.filter(user=request.user).first()
-                receiver_message = f"Transaction was completed successfully.\nReference: {ref}\nReceiver:{number}\nAmount: {transaction_referenced.bundle_amount}MB\nCurrent Balance:{new_current_user.bundle_amount}MB"
-                quicksend_url = "https://uellosend.com/quicksend/"
-                data = {
-                    'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
-                    'sender_id': "BESTPAY GH",
-                    'message': receiver_message,
-                    'recipient': f"0{current_user.phone}"
-                }
-
-                headers = {'Content-type': 'application/json'}
-
-                response = requests.post(quicksend_url, headers=headers, json=data)
-                print(response.json())
-                messages.success(request, message=message)
-                return redirect("txn_history")
-            else:
-                messages.error(request, message)
-                return redirect("txn_history")
-
-        url = f"https://backend.boldassure.net:445/live/api/context/business/airteltigo-gh/ishare/tranx-status/{batch_id}"
-
-        payload = {}
-        headers = {
-            'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkY2I3ZmZiZi1mNWE3LTQ2YjUtOGQyMC0wNWMwYjYyMWY3YWMiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiaWF0IjoxNjk4MTkyNDE0LCJleHAiOjE2OTgyNzg0MDB9.B_Vr5_mO59vtP8J9SydFnwUrKcZ10rcX7DfvaY_jvYBpire7OFtw29NtnJIy-oGXadxJ-ahC72ZIAy2fxEiMcg"
-        }
-
-        response = requests.request("GET", url, headers=headers, data=payload)
-        data = response.json()
+    if batch_id == "Failed":
+        print("moving on to send")
+        response = helper.send_flexi_bundle(request, request.user, current_user, number,
+                                            transaction_referenced.bundle_amount, ref, "fixing")
+        data = response.data
         print(data)
-        api_message = data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["apiResponse"]["responseMsg"]
-        ishare_response = \
-            data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["ishareApiResponseData"]["apiResponseData"][
-                0][
-                "responseMsg"]
-        ishare_response_code = \
-            data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["ishareApiResponseData"]["apiResponseData"][
-                0][
-                "responseCode"]
-        print(ishare_response)
-        print(api_message)
+        message = data["message"]
+        if data["status"] == "Success":
+            new_current_user = models.UserProfile.objects.filter(user=request.user).first()
+            receiver_message = f"Transaction was completed successfully.\nReference: {ref}\nReceiver:{number}\nAmount: {transaction_referenced.bundle_amount}MB\nCurrent Balance:{new_current_user.bundle_amount}MB"
+            quicksend_url = "https://uellosend.com/quicksend/"
+            data = {
+                'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
+                'sender_id': "BESTPAY GH",
+                'message': receiver_message,
+                'recipient': f"0{current_user.phone}"
+            }
 
-        if ishare_response == "Crediting Successful.":
-            messages.success(request, "Transaction was successful")
-        elif api_message == "Transaction Failed" and ishare_response_code == "306":
-            messages.error(request, ishare_response)
+            headers = {'Content-type': 'application/json'}
+
+            response = requests.post(quicksend_url, headers=headers, json=data)
+            print(response.json())
+            messages.success(request, message=message)
             return redirect("txn_history")
-        elif api_message == "Transaction Failed" and ishare_response_code == "311":
-            messages.error(request, ishare_response)
-            return redirect("txn_history")
-        elif api_message == "Transaction Failed":
-            print("moving on to send")
-            response = helper.send_flexi_bundle(request, request.user, current_user, number,
-                                                transaction_referenced.bundle_amount, ref, "fixing")
-            data = response.data
-            print(data)
-            message = data["message"]
-            if data["status"] == "Success":
-                new_current_user = models.UserProfile.objects.filter(user=request.user).first()
-                receiver_message = f"Transaction was completed successfully.\nReference: {ref}\nReceiver:{number}\nAmount: {transaction_referenced.bundle_amount}MB\nCurrent Balance:{new_current_user.bundle_amount}MB"
-                quicksend_url = "https://uellosend.com/quicksend/"
-                data = {
-                    'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
-                    'sender_id': "BESTPAY GH",
-                    'message': receiver_message,
-                    'recipient': f"0{current_user.phone}"
-                }
-
-                headers = {'Content-type': 'application/json'}
-
-                response = requests.post(quicksend_url, headers=headers, json=data)
-                print(response.json())
-                messages.success(request, f"{message}. {ishare_response}")
-                return redirect("txn_history")
-            else:
-                messages.error(request, message)
-                return redirect("txn_history")
         else:
-            messages.success(request, api_message)
+            messages.error(request, message)
             return redirect("txn_history")
-        return redirect('txn_history')
-    else:
-        messages.success(request, "Access Denied")
+
+    url = f"https://backend.boldassure.net:445/live/api/context/business/airteltigo-gh/ishare/tranx-status/{batch_id}"
+
+    payload = {}
+    headers = {
+        'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkY2I3ZmZiZi1mNWE3LTQ2YjUtOGQyMC0wNWMwYjYyMWY3YWMiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiaWF0IjoxNjk4MTkyNDE0LCJleHAiOjE2OTgyNzg0MDB9.B_Vr5_mO59vtP8J9SydFnwUrKcZ10rcX7DfvaY_jvYBpire7OFtw29NtnJIy-oGXadxJ-ahC72ZIAy2fxEiMcg"
+    }
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    data = response.json()
+    print(data)
+    api_message = data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["apiResponse"]["responseMsg"]
+    ishare_response = \
+        data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["ishareApiResponseData"]["apiResponseData"][
+            0][
+            "responseMsg"]
+    ishare_response_code = \
+        data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["ishareApiResponseData"]["apiResponseData"][
+            0][
+            "responseCode"]
+    print(ishare_response)
+    print(api_message)
+
+    if ishare_response == "Crediting Successful.":
+        messages.success(request, "Transaction was successful")
+    elif api_message == "Transaction Failed" and ishare_response_code == "306":
+        messages.error(request, ishare_response)
         return redirect("txn_history")
+    elif api_message == "Transaction Failed" and ishare_response_code == "311":
+        messages.error(request, ishare_response)
+        return redirect("txn_history")
+    elif api_message == "Transaction Failed":
+        print("moving on to send")
+        response = helper.send_flexi_bundle(request, request.user, current_user, number,
+                                            transaction_referenced.bundle_amount, ref, "fixing")
+        data = response.data
+        print(data)
+        message = data["message"]
+        if data["status"] == "Success":
+            new_current_user = models.UserProfile.objects.filter(user=request.user).first()
+            receiver_message = f"Transaction was completed successfully.\nReference: {ref}\nReceiver:{number}\nAmount: {transaction_referenced.bundle_amount}MB\nCurrent Balance:{new_current_user.bundle_amount}MB"
+            quicksend_url = "https://uellosend.com/quicksend/"
+            data = {
+                'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
+                'sender_id': "BESTPAY GH",
+                'message': receiver_message,
+                'recipient': f"0{current_user.phone}"
+            }
+
+            headers = {'Content-type': 'application/json'}
+
+            response = requests.post(quicksend_url, headers=headers, json=data)
+            print(response.json())
+            messages.success(request, f"{message}. {ishare_response}")
+            return redirect("txn_history")
+        else:
+            messages.error(request, message)
+            return redirect("txn_history")
+    else:
+        messages.success(request, api_message)
+        return redirect("txn_history")
+    return redirect('txn_history')
