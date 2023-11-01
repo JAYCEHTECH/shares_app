@@ -1,6 +1,8 @@
 import secrets
 
 import requests
+from decouple import config
+
 from .api import api_views
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -383,7 +385,7 @@ def fix_transaction(request, ref):
 
     payload = {}
     headers = {
-        'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkY2I3ZmZiZi1mNWE3LTQ2YjUtOGQyMC0wNWMwYjYyMWY3YWMiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiaWF0IjoxNjk4MTkyNDE0LCJleHAiOjE2OTgyNzg0MDB9.B_Vr5_mO59vtP8J9SydFnwUrKcZ10rcX7DfvaY_jvYBpire7OFtw29NtnJIy-oGXadxJ-ahC72ZIAy2fxEiMcg"
+        'Authorization': config("BEARER_TOKEN")
     }
 
     response = requests.request("GET", url, headers=headers, data=payload)
