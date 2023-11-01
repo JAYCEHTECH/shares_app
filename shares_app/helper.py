@@ -9,11 +9,14 @@ from . import models
 from .api import api_views
 
 
-def send_flexi_bundle(request, user_details, current_user, receiver, bundle, reference):
+def send_flexi_bundle(request, user_details, current_user, receiver, bundle, reference, doing):
     response = api_views.ValidateAPIKeysView().post(request).data
     if response["valid"]:
         user_transactions = models.NewTransaction.objects.filter(user=user_details)
         for transaction in user_transactions:
+            print(doing)
+            if doing == "fixing":
+                break
             if transaction.reference == reference:
                 return Response(data={"code": "0001", "status": "Failed", "error": "Duplicate Error",
                                       "message": "Transaction reference already exists"},
@@ -43,40 +46,58 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
 
         if response.status_code == 200:
             batch_id = data["batchId"]
-            new_transaction = models.NewTransaction.objects.create(
-                user=user_details,
-                reference=reference,
-                batch_id=batch_id,
-                receiver=receiver,
-                account_number=current_user.phone,
-                first_name=user_details.first_name,
-                last_name=user_details.last_name,
-                account_email=user_details.email,
-                bundle_amount=bundle,
-                transaction_status="Completed"
-            )
-            new_transaction.save()
-            current_user.bundle_amount -= bundle
-            current_user.save()
-            return Response(
-                data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
-                      "reference": reference}, status=status.HTTP_200_OK)
+            if models.NewTransaction.objects.filter(reference=reference).exists():
+                transaction_to_be_modified = models.NewTransaction.objects.get(reference=reference)
+                transaction_to_be_modified.transaction_status = "Completed"
+                transaction_to_be_modified.batch_id = batch_id
+                transaction_to_be_modified.save()
+                return Response(
+                    data={"code": "0000", "status": "Success", "message": "Transaction was fixed successfully",
+                          "reference": reference}, status=status.HTTP_200_OK)
+            else:
+                new_transaction = models.NewTransaction.objects.create(
+                    user=user_details,
+                    reference=reference,
+                    batch_id=batch_id,
+                    receiver=receiver,
+                    account_number=current_user.phone,
+                    first_name=user_details.first_name,
+                    last_name=user_details.last_name,
+                    account_email=user_details.email,
+                    bundle_amount=bundle,
+                    transaction_status="Completed"
+                )
+                new_transaction.save()
+                current_user.bundle_amount -= bundle
+                current_user.save()
+                return Response(
+                    data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
+                          "reference": reference}, status=status.HTTP_200_OK)
         else:
-            new_transaction = models.NewTransaction.objects.create(
-                user=user_details,
-                reference=reference,
-                receiver=receiver,
-                account_number=current_user.phone,
-                first_name=user_details.first_name,
-                last_name=user_details.last_name,
-                account_email=user_details.email,
-                bundle_amount=bundle,
-                transaction_status="Failed"
-            )
-            new_transaction.save()
-            return Response(data={"code": "0001", "status": "Failed", "error": "Transaction not successful",
-                                  "message": "Transaction could not be processed. Try again later."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            if models.NewTransaction.objects.filter(reference=reference, transaction_status="Failed").exists():
+                transaction_to_be_modified = models.NewTransaction.objects.get(reference=reference)
+                transaction_to_be_modified.transaction_status = "Failed"
+                transaction_to_be_modified.batch_id = "Failed"
+                transaction_to_be_modified.save()
+                return Response(data={"code": "0001", "status": "Failed", "error": "Transaction not successful",
+                                      "message": "Transaction could not be processed. Try again later."},
+                                status=status.HTTP_400_BAD_REQUEST)
+            else:
+                new_transaction = models.NewTransaction.objects.create(
+                    user=user_details,
+                    reference=reference,
+                    receiver=receiver,
+                    account_number=current_user.phone,
+                    first_name=user_details.first_name,
+                    last_name=user_details.last_name,
+                    account_email=user_details.email,
+                    bundle_amount=bundle,
+                    transaction_status="Failed"
+                )
+                new_transaction.save()
+                return Response(data={"code": "0001", "status": "Failed", "error": "Transaction not successful",
+                                      "message": "Transaction could not be processed. Try again later."},
+                                status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response(data={"code": "0001", "error": "Authentication error", "status": "Failed",
                               "message": "Unable to authenticate using Authentication keys. Check and try again."},

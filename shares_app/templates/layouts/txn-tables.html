@@ -36,6 +36,9 @@
                         <th>Status</th>
                         <th>Reference</th>
                         <th>Batch ID</th>
+                        {% if request.user.is_superuser %}
+                        <th>Action</th>
+                          {% endif %}
                       </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -54,6 +57,9 @@
                             </td>
                             <td>{{ txn.reference }}</td>
                             <td>{{ txn.batch_id }}</td>
+                          {% if request.user.is_superuser %}
+                            <td><a href="{% url 'fix_transaction' ref=txn.reference %}" class="btn btn-sm btn-success">Fix Txn</a></td>
+                          {% endif %}
                           </tr>
                         {% endfor %}
                     {% else %}

@@ -20,6 +20,7 @@ urlpatterns = [
     path("query_transaction/", views.query_transaction, name="query_transaction"),
     path("all_transactions/", views.all_transactions, name="all_transactions"),
     path('logout/', LogoutView.as_view(next_page=settings.LOGOUT_REDIRECT_URL), name='logout'),
+    path("fix_txn/<str:ref>", views.fix_transaction, name='fix_transaction'),
 
     # =================== API URLS ===============================
     path('api_keys/', api_views.APIKeysView.as_view(), name='api-keys'),
