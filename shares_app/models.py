@@ -28,6 +28,7 @@ class UserProfile(models.Model):
     sms_sender_name = models.CharField(max_length=100, null=False, blank=False, default="Bundle")
     phone = models.PositiveIntegerField(null=True, blank=True)
     bundle_amount = models.PositiveBigIntegerField(null=True, blank=True)
+    sms_api = models.CharField(max_length=250, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username}"
