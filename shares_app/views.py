@@ -79,10 +79,13 @@ def send_bundle_page(request):
                 }
 
                 headers = {'Content-type': 'application/json'}
+                try:
+                    response = requests.post(quicksend_url, headers=headers, json=data)
+                    print(response.json())
+                    return JsonResponse({'status': message, "icon": "success"})
+                except:
+                    return JsonResponse({'status': message, "icon": "success"})
 
-                response = requests.post(quicksend_url, headers=headers, json=data)
-                print(response.json())
-                return JsonResponse({'status': message, "icon": "success"})
             else:
                 return JsonResponse({'status': message, "icon": "error"})
     #         response = send_bundle["response"]
