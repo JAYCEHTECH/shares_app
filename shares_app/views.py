@@ -441,6 +441,33 @@ def fix_transaction(request, ref):
         else:
             messages.error(request, message)
             return redirect("txn_history")
+    elif api_message == "No record for transactionID":
+        print("moving on to send")
+        response = helper.send_flexi_bundle(request, request.user, current_user, number,
+                                            transaction_referenced.bundle_amount, ref, "fixing")
+        data = response.data
+        print(data)
+        message = data["message"]
+        if data["status"] == "Success":
+            new_current_user = models.UserProfile.objects.filter(user=request.user).first()
+            receiver_message = f"Transaction was completed successfully.\nReference: {ref}\nReceiver:{number}\nAmount: {transaction_referenced.bundle_amount}MB\nCurrent Balance:{new_current_user.bundle_amount}MB"
+            quicksend_url = "https://uellosend.com/quicksend/"
+            data = {
+                'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
+                'sender_id': "BESTPAY GH",
+                'message': receiver_message,
+                'recipient': f"0{current_user.phone}"
+            }
+
+            headers = {'Content-type': 'application/json'}
+
+            response = requests.post(quicksend_url, headers=headers, json=data)
+            print(response.json())
+            messages.success(request, f"{message}. {ishare_response}")
+            return redirect("txn_history")
+        else:
+            messages.error(request, message)
+            return redirect("txn_history")
     else:
         messages.success(request, api_message)
         return redirect("txn_history")
