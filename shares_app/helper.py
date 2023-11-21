@@ -14,7 +14,6 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
     if response["valid"]:
         user_transactions = models.NewTransaction.objects.filter(user=user_details)
         for transaction in user_transactions:
-            print(doing)
             if doing == "fixing":
                 break
             if transaction.reference == reference:
