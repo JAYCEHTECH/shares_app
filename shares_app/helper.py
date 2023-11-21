@@ -47,6 +47,10 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
             batch_id = data["batchId"]
             if models.NewTransaction.objects.filter(reference=reference).exists():
                 transaction_to_be_modified = models.NewTransaction.objects.get(reference=reference)
+                if transaction_to_be_modified.transaction_status == "Completed":
+                    return Response(
+                        data={"code": "0000", "status": "Success", "message": "Transaction fixed",
+                              "reference": reference}, status=status.HTTP_200_OK)
                 transaction_to_be_modified.transaction_status = "Completed"
                 transaction_to_be_modified.batch_id = batch_id
                 transaction_to_be_modified.save()
