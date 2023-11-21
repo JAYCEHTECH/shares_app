@@ -145,6 +145,7 @@ class NewTransactionView(APIView):
                 else:
                     response = helper.api_send_bundle(serializer.validated_data)
                     print(response.json())
+                    print("this")
                     data = response.json()
                     if response.status_code == 200:
                         batch_id = data["batchId"]
