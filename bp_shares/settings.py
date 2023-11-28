@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount'
+    'allauth.socialaccount',
+    'corsheaders'
 ]
 
 # SITE_ID = 1
@@ -74,9 +75,15 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
+]
+
+CORS_ALLOWED_ORIGINS = [  # Replace with your allowed domain(s)
+    "http://localhost:8000",
+    "http://127.0.0.1:8000" # Example: Allow localhost for testing
 ]
 
 ROOT_URLCONF = 'bp_shares.urls'
