@@ -85,6 +85,8 @@ CORS_ALLOWED_ORIGINS = [  # Replace with your allowed domain(s)
    '*'
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 ROOT_URLCONF = 'bp_shares.urls'
 
 TEMPLATES = [
