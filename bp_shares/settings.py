@@ -81,8 +81,6 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
-ACC = True
-
 CORS_ALLOWED_ORIGINS = [  # Replace with your allowed domain(s)
    '*'
 ]
