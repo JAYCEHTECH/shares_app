@@ -180,6 +180,17 @@ class NewTransactionView(APIView):
                                   "message": "Unable to authenticate using Authentication keys. Check and try again."},
                             status=status.HTTP_401_UNAUTHORIZED)
 
+    def options(self, request, *args, **kwargs):
+        # Handle OPTIONS request for CORS preflight check
+        response = super().options(request, *args, **kwargs)
+
+        # Add CORS headers to the OPTIONS response
+        response["Access-Control-Allow-Origin"] = "*"  # Replace with your allowed origin
+        response["Access-Control-Allow-Methods"] = "POST"  # Allow specific methods
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization, api-key, api-secret"  # Allow specific headers
+
+        return response
+
 
 class TransactionDetail(APIView):
     # print("querying")
