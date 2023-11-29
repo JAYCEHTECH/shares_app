@@ -187,7 +187,7 @@ class NewTransactionView(APIView):
 
         # Add CORS headers to the OPTIONS response
         response["Access-Control-Allow-Origin"] = "https://test.bestpaygh.com"  # Replace with your allowed origin
-        response["Access-Control-Allow-Methods"] = "POST"  # Allow specific methods
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD"
         response["Access-Control-Allow-Headers"] = "Content-Type, Authorization, api-key, api-secret, accept-encoding, Accept-Language, origin"  # Allow specific headers
 
         return response
