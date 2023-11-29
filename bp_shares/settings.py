@@ -86,12 +86,29 @@ CORS_ALLOWED_ORIGINS = [  # Replace with your allowed domain(s)
    '*'
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
 CORS_ALLOW_HEADERS = [
     'Accept',
+    "accept-encoding",
     'Accept-Language',
     'Content-Type',
     'api-key',
-    'api-secret'
+    'api-secret',
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "cache-control",
+    "pragma",
     # Include other headers as needed
     # Add more headers as required for your application
 ]
