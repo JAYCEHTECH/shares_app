@@ -86,6 +86,16 @@ CORS_ALLOWED_ORIGINS = [  # Replace with your allowed domain(s)
    '*'
 ]
 
+CORS_ALLOW_HEADERS = [
+    'Accept',
+    'Accept-Language',
+    'Content-Type',
+    'api-key',
+    'api-secret'
+    # Include other headers as needed
+    # Add more headers as required for your application
+]
+
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://\w+\.example\.com$",
 ]
