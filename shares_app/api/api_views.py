@@ -161,7 +161,7 @@ class NewTransactionView(APIView):
                         # print(ver_response.json())
                         return Response(
                             data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
-                                  "reference": reference}, status=status.HTTP_200_OK)
+                                  "reference": reference, "batch_id": batch_id if batch_id else 'None'}, status=status.HTTP_200_OK)
                     else:
                         serializer.save(
                             user=user,
