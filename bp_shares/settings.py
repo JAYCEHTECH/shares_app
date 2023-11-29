@@ -98,19 +98,18 @@ CORS_ALLOW_METHODS = [
 
 CORS_ALLOW_HEADERS = [
     'Accept',
-    "accept-encoding",
+    'accept-encoding',
     'Accept-Language',
     'Content-Type',
     'api-key',
     'api-secret',
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-    "cache-control",
-    "pragma",
-    # Include other headers as needed
-    # Add more headers as required for your application
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'cache-control',
+    'pragma',
+    'Access-Control-Allow-Methods'
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
