@@ -81,10 +81,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
-CORS_ALLOWED_ORIGINS = [  # Replace with your allowed domain(s)
-    "http://localhost:8000",
-    "http://127.0.0.1:8000" # Example: Allow localhost for testing
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'bp_shares.urls'
 
