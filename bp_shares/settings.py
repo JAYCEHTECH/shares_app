@@ -101,15 +101,21 @@ CORS_ALLOW_HEADERS = [
     'accept-encoding',
     'Accept-Language',
     'Content-Type',
+    'Authorization'
+    'Api-Key',
+    'Api-Secret',
     'api-key',
     'api-secret',
+    'x-api-key'
+    'x-api-secret'
     'origin',
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
     'cache-control',
     'pragma',
-    'Access-Control-Allow-Methods'
+    'Access-Control-Allow-Methods',
+    'Access-Control-Allow-Headers'
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
