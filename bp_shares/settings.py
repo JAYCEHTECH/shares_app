@@ -83,10 +83,9 @@ MIDDLEWARE = [
 
 
 CORS_ALLOWED_ORIGINS = [  # Replace with your allowed domain(s)
-   '*'
+   'https://test.bestpaygh.com',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
@@ -117,12 +116,6 @@ CORS_ALLOW_HEADERS = [
     'Access-Control-Allow-Methods',
     'Access-Control-Allow-Headers'
 ]
-
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://\w+\.example\.com$",
-]
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'bp_shares.urls'
 
