@@ -446,6 +446,7 @@ def fix_transaction(request, ref):
                 messages.error(request, message)
                 return redirect("txn_history")
         elif api_message == "No record for transactionID":
+            print("no rec")
             response = helper.send_flexi_bundle(request, request.user, current_user, number,
                                                 transaction_referenced.bundle_amount, ref, "fixing")
             data = response.data
