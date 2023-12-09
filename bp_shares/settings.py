@@ -81,9 +81,9 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
-
 CORS_ALLOWED_ORIGINS = [  # Replace with your allowed domain(s)
-   'https://test.bestpaygh.com',
+    'https://test.bestpaygh.com',
+    'https://www.bestpaygh.com'
 ]
 
 CORS_ALLOW_METHODS = [
@@ -160,7 +160,6 @@ DATABASES = {
         }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
