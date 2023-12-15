@@ -295,7 +295,7 @@ def user_balance(request):
         user_profile = models.UserProfile.objects.get(user=user)
         print(user_profile)
         user_bundle_balance = user_profile.bundle_amount if user_profile.bundle_amount else 0
-        return Response(data={"code": "0000", "user": user.username, "bundle_balance": user_bundle_balance}, status=status.HTTP_200_OK)
+        return Response(data={"code": "0000", "user": f"{user.first_name} {user.last_name}", "bundle_balance": user_bundle_balance}, status=status.HTTP_200_OK)
     else:
         return Response(data={"code": "0001", "error": "Authentication error",
                               "status": "Failed",
