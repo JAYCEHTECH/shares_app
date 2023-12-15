@@ -26,6 +26,7 @@ urlpatterns = [
     path('api_keys/', api_views.APIKeysView.as_view(), name='api-keys'),
     path('validate-api-keys/', api_views.ValidateAPIKeysView.as_view(), name='validate-api-keys'),
     path("api-token-auth/", obtain_auth_token),
+    path("api/user_bundle_volume", api_views.user_balance, name='user_balance'),
     path("api/flexi/v1/transactions/", api_views.transactions, name="transactions"),
     path("api/flexi/v1/all_transactions/", api_views.get_all_transactions, name="all_user_transactions"),
     path("api/flexi/v1/new_transaction/", api_views.NewTransactionView.as_view(), name="new_transaction"),

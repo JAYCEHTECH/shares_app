@@ -282,6 +282,27 @@ class TransactionDetail(APIView):
                             status=status.HTTP_401_UNAUTHORIZED)
 
 
+@api_view(["GET"])
+def user_balance(request):
+    response = ValidateAPIKeysView().post(request)
+    data = response.data
+
+    if data["valid"]:
+        try:
+            user = models.CustomUser.objects.get(api_key=request.headers.get("api-key"))
+        except models.CustomUser.DoesNotExist:
+            return Response(data={"code": "0001", "message": "User not found"}, status=status.HTTP_200_OK)
+        user_profile = models.UserProfile.objects.get(user=user)
+        print(user_profile)
+        user_bundle_balance = user_profile.bundle_amount if user_profile.bundle_amount else 0
+        return Response(data={"code": "0000", "user": user.username, "bundle_balance": user_bundle_balance}, status=status.HTTP_200_OK)
+    else:
+        return Response(data={"code": "0001", "error": "Authentication error",
+                              "status": "Failed",
+                              "message": "Unable to authenticate using Authentication keys. Check and try again."},
+                        status=status.HTTP_401_UNAUTHORIZED)
+
+
 @api_view(["POST"])
 def null_transaction_query(request):
     return Response(data={"code": "0001", "status": "Failed", "error": "Null Reference", "message": "Provide a valid reference to query"}, status=status.HTTP_200_OK)
