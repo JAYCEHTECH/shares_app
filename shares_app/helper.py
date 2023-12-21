@@ -160,6 +160,7 @@ def api_send_bundle(data):
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
+    print(response.json())
     return response
 
 
