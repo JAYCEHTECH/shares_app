@@ -54,6 +54,9 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
                 transaction_to_be_modified.transaction_status = "Completed"
                 transaction_to_be_modified.batch_id = batch_id
                 transaction_to_be_modified.save()
+                current_user.bundle_amount -= bundle
+                current_user.save()
+                print(current_user.bundle_amount)
                 return Response(
                     data={"code": "0000", "status": "Success", "message": "Transaction was fixed successfully",
                           "reference": reference}, status=status.HTTP_200_OK)
