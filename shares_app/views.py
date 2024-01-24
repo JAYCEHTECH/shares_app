@@ -364,6 +364,8 @@ def fix_transaction(request, ref):
         print(data)
         message = data["message"]
         if data["status"] == "Success":
+            transaction_referenced.transaction_status = "Completed"
+            transaction_referenced.save()
             new_current_user = models.UserProfile.objects.filter(user=request.user).first()
             receiver_message = f"Transaction was completed successfully.\nReference: {ref}\nReceiver:{number}\nAmount: {transaction_referenced.bundle_amount}MB\nCurrent Balance:{new_current_user.bundle_amount}MB"
             quicksend_url = "https://uellosend.com/quicksend/"
