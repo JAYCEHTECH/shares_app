@@ -36,7 +36,6 @@
                         <th>Status</th>
                         <th>Reference</th>
                         <th>Batch ID</th>
-                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -55,7 +54,6 @@
                             </td>
                             <td>{{ txn.reference }}</td>
                             <td>{{ txn.batch_id }}</td>
-                            <td><a href="{% url 'fix_transaction' ref=txn.reference %}" class="btn btn-sm btn-success">Fix Txn</a></td>
                           </tr>
                         {% endfor %}
                     {% else %}
