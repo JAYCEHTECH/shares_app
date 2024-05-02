@@ -69,19 +69,22 @@ def send_bundle_page(request):
             message = data["message"]
             if data["status"] == "Success":
                 new_current_user = models.UserProfile.objects.filter(user=request.user).first()
-                receiver_message = f"Hello,\nYour bundle transaction was completed successfully.\nReference: {reference}\nAmount: {amount}MB\nBuy again soon!"
-                quicksend_url = "https://uellosend.com/quicksend/"
-                data = {
-                    'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
-                    'sender_id': "BUNDLE",
-                    'message': receiver_message,
-                    'recipient': f"0{receiver}"
-                }
-
-                headers = {'Content-type': 'application/json'}
+                receiver_message = f"Your account has been credited with {amount}MB."
+                # quicksend_url = "https://uellosend.com/quicksend/"
+                # data = {
+                #     'api_key': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.=eyJkYXRhIjp7InVzZXJpZCI6MTU5MiwiYXBpU2VjcmV0IjoiaFY2YjNDcHR1PW9wQnB2IiwiaXNzdWVyIjoiVUVMTE9TRU5EIn19',
+                #     'sender_id': "BUNDLE",
+                #     'message': receiver_message,
+                #     'recipient': f"0{receiver}"
+                # }
+                #
+                # headers = {'Content-type': 'application/json'}
                 try:
-                    response = requests.post(quicksend_url, headers=headers, json=data)
-                    print(response.json())
+                    response1 = requests.get(
+                        f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to=0{receiver}&from=Bundle&sms={receiver_message}")
+                    print(response1.text)
+                    # response = requests.post(quicksend_url, headers=headers, json=data)
+                    # print(response.json())
                     return JsonResponse({'status': message, "icon": "success"})
                 except:
                     return JsonResponse({'status': message, "icon": "success"})
