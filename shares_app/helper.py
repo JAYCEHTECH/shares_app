@@ -28,7 +28,7 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
         # Payload with transaction details
         payload = {
             "transaction_id": reference,
-            "volume": bundle,
+            "volume": str(bundle),
             "recipient": receiver
         }
 
@@ -131,7 +131,7 @@ def api_send_bundle(data):
     # Payload with transaction details
     payload = {
         "transaction_id": reference,
-        "volume": bundle,
+        "volume": str(bundle),
         "recipient": receiver
     }
 
