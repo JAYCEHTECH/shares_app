@@ -125,6 +125,7 @@ def api_send_bundle(data):
     receiver = data["receiver"],
     reference = f"{secrets.token_hex(6)}".upper()
 
+    print(receiver)
     url = "https://api.hubnet.app/send"
 
     # Header with the API key
@@ -142,6 +143,7 @@ def api_send_bundle(data):
     # Make the POST request
     response = requests.post(url, headers=headers, json=payload)
     data = response.json()
+    print(data)
 
     if response.status_code == 200:
         print("Request successful:", response.json())
