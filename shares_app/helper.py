@@ -130,7 +130,7 @@ def api_send_bundle(data):
     print(receiver)
     print(bundle)
     print(reference)
-    print(config("HUBNET_KEY")
+    print(config("HUBNET_KEY"))
     
     url = "https://api.hubnet.app/send"
 
