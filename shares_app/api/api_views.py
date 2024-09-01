@@ -149,19 +149,30 @@ class NewTransactionView(APIView):
                     data = response.json()
                     print(data)
                     if response.status_code == 200:
-                        serializer.save(
-                            user=user,
-                            transaction_status="Completed",
-                            batch_id="Null"
-                        )
-                        print(user_profile.bundle_amount)
-                        user_profile.bundle_amount -= bundle_amount
-                        user_profile.save()
-                        # ver_response = requests.get(url=f"https://console.bestpaygh.com/api/v1/transaction_detail/{batch_id}/")
-                        # print(ver_response.json())
-                        return Response(
-                            data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
-                                  "reference": reference}, status=status.HTTP_200_OK)
+                        response_code = data["data"]["response_code"]
+                        if response_code == "200":
+                            serializer.save(
+                                user=user,
+                                transaction_status="Completed",
+                                batch_id="Null"
+                            )
+                            print(user_profile.bundle_amount)
+                            user_profile.bundle_amount -= bundle_amount
+                            user_profile.save()
+                            # ver_response = requests.get(url=f"https://console.bestpaygh.com/api/v1/transaction_detail/{batch_id}/")
+                            # print(ver_response.json())
+                            return Response(
+                                data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
+                                      "reference": reference}, status=status.HTTP_200_OK)
+                        else:
+                            serializer.save(
+                                user=user,
+                                transaction_status="Failed",
+                            )
+                            return Response(
+                                data={"code": "0001", "status": "Failed", "error": "Transaction not successful",
+                                      "message": "Transaction could not be processed. Try again later."},
+                                status=status.HTTP_400_BAD_REQUEST)
                     else:
                         serializer.save(
                             user=user,

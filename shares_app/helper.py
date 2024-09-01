@@ -42,25 +42,48 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
         # Check the response
         if response.status_code == 200:
             print("Request successful:", response.json())
-            new_transaction = models.NewTransaction.objects.create(
-                user=user_details,
-                reference=reference,
-                batch_id=reference,
-                receiver=receiver,
-                account_number=current_user.phone,
-                first_name=user_details.first_name,
-                last_name=user_details.last_name,
-                account_email=user_details.email,
-                bundle_amount=bundle,
-                transaction_status="Completed"
-            )
-            new_transaction.save()
-            current_user.bundle_amount -= bundle
-            current_user.save()
-            print(current_user.bundle_amount)
-            return Response(
-                data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
-                      "reference": reference}, status=status.HTTP_200_OK)
+            data = response.json()
+            response_code = data["data"]["response_code"]
+            if response_code == "200":
+                new_transaction = models.NewTransaction.objects.create(
+                    user=user_details,
+                    reference=reference,
+                    batch_id=reference,
+                    receiver=receiver,
+                    account_number=current_user.phone,
+                    first_name=user_details.first_name,
+                    last_name=user_details.last_name,
+                    account_email=user_details.email,
+                    bundle_amount=bundle,
+                    transaction_status="Completed"
+                )
+                new_transaction.save()
+                current_user.bundle_amount -= bundle
+                current_user.save()
+                print(current_user.bundle_amount)
+                return Response(
+                    data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
+                          "reference": reference}, status=status.HTTP_200_OK)
+            else:
+                print("Request failed with status code:", response.status_code)
+                print("Response:", response.text)
+                print(receiver)
+                new_transaction = models.NewTransaction.objects.create(
+                    user=user_details,
+                    reference=reference,
+                    batch_id="Null",
+                    receiver=receiver,
+                    account_number=current_user.phone,
+                    first_name=user_details.first_name,
+                    last_name=user_details.last_name,
+                    account_email=user_details.email,
+                    bundle_amount=bundle,
+                    transaction_status="Failed"
+                )
+                new_transaction.save()
+                return Response(data={"code": "0001", "error": response.status_code, "status": "Failed",
+                                      "message": "Something went wrong."},
+                                status=status.HTTP_400_BAD_REQUEST)
         else:
             print("Request failed with status code:", response.status_code)
             print("Response:", response.text)
