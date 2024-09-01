@@ -1,4 +1,5 @@
 import json
+import secrets
 
 import requests
 from decouple import config
@@ -14,97 +15,69 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
     if response["valid"]:
         user_transactions = models.NewTransaction.objects.filter(user=user_details)
         for transaction in user_transactions:
-            if doing == "fixing":
-                break
             if transaction.reference == reference:
-                return Response(data={"code": "0001", "status": "Failed", "error": "Duplicate Error",
-                                      "message": "Transaction reference already exists"},
-                                status=status.HTTP_400_BAD_REQUEST)
+                reference = reference = f"{secrets.token_hex(6)}".upper()
 
-        url = "https://backend.boldassure.net:445/live/api/context/business/transaction/new-transaction"
+        url = "https://api.hubnet.app/send"
 
-        payload = json.dumps({
-            "accountNo": current_user.phone,
-            "accountFirstName": user_details.first_name,
-            "accountLastName": user_details.last_name,
-            "accountMsisdn": receiver,
-            "accountEmail": user_details.email,
-            "accountVoiceBalance": 0,
-            "accountDataBalance": bundle,
-            "accountCashBalance": 0,
-            "active": True
-        })
-
+        # Header with the API key
         headers = {
-            'Authorization': config("BEARER_TOKEN"),
-            'Content-Type': 'application/json'
+            "X-HUBNET-KEY": config("HUBNET_KEY"),
         }
 
-        response = requests.request("POST", url, headers=headers, data=payload)
+        # Payload with transaction details
+        payload = {
+            "transaction_id": reference,
+            "volume": bundle,
+            "recipient": receiver
+        }
+
+        # Make the POST request
+        response = requests.post(url, headers=headers, json=payload)
         data = response.json()
 
+        # Check the response
         if response.status_code == 200:
-            batch_id = data["batchId"]
-            if models.NewTransaction.objects.filter(reference=reference).exists():
-                transaction_to_be_modified = models.NewTransaction.objects.get(reference=reference)
-                if transaction_to_be_modified.transaction_status == "Completed":
-                    return Response(
-                        data={"code": "0000", "status": "Success", "message": "Transaction fixed",
-                              "reference": reference}, status=status.HTTP_200_OK)
-                transaction_to_be_modified.transaction_status = "Completed"
-                transaction_to_be_modified.batch_id = batch_id
-                transaction_to_be_modified.save()
-                current_user.bundle_amount -= bundle
-                current_user.save()
-                print(current_user.bundle_amount)
-                return Response(
-                    data={"code": "0000", "status": "Success", "message": "Transaction was fixed successfully",
-                          "reference": reference}, status=status.HTTP_200_OK)
-            else:
-                new_transaction = models.NewTransaction.objects.create(
-                    user=user_details,
-                    reference=reference,
-                    batch_id=batch_id,
-                    receiver=receiver,
-                    account_number=current_user.phone,
-                    first_name=user_details.first_name,
-                    last_name=user_details.last_name,
-                    account_email=user_details.email,
-                    bundle_amount=bundle,
-                    transaction_status="Completed"
-                )
-                new_transaction.save()
-                current_user.bundle_amount -= bundle
-                current_user.save()
-                print(current_user.bundle_amount)
-                return Response(
-                    data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
-                          "reference": reference}, status=status.HTTP_200_OK)
+            print("Request successful:", response.json())
+            new_transaction = models.NewTransaction.objects.create(
+                user=user_details,
+                reference=reference,
+                batch_id="Null",
+                receiver=receiver,
+                account_number=current_user.phone,
+                first_name=user_details.first_name,
+                last_name=user_details.last_name,
+                account_email=user_details.email,
+                bundle_amount=bundle,
+                transaction_status="Completed"
+            )
+            new_transaction.save()
+            current_user.bundle_amount -= bundle
+            current_user.save()
+            print(current_user.bundle_amount)
+            return Response(
+                data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
+                      "reference": reference}, status=status.HTTP_200_OK)
         else:
-            if models.NewTransaction.objects.filter(reference=reference, transaction_status="Failed").exists():
-                transaction_to_be_modified = models.NewTransaction.objects.get(reference=reference)
-                transaction_to_be_modified.transaction_status = "Failed"
-                transaction_to_be_modified.batch_id = "Failed"
-                transaction_to_be_modified.save()
-                return Response(data={"code": "0001", "status": "Failed", "error": "Transaction not successful",
-                                      "message": "Transaction could not be processed. Try again later."},
-                                status=status.HTTP_400_BAD_REQUEST)
-            else:
-                new_transaction = models.NewTransaction.objects.create(
-                    user=user_details,
-                    reference=reference,
-                    receiver=receiver,
-                    account_number=current_user.phone,
-                    first_name=user_details.first_name,
-                    last_name=user_details.last_name,
-                    account_email=user_details.email,
-                    bundle_amount=bundle,
-                    transaction_status="Failed"
-                )
-                new_transaction.save()
-                return Response(data={"code": "0001", "status": "Failed", "error": "Transaction not successful",
-                                      "message": "Transaction could not be processed. Try again later."},
-                                status=status.HTTP_400_BAD_REQUEST)
+            print("Request failed with status code:", response.status_code)
+            print("Response:", response.text)
+            new_transaction = models.NewTransaction.objects.create(
+                user=user_details,
+                reference=reference,
+                batch_id="Null",
+                receiver=receiver,
+                account_number=current_user.phone,
+                first_name=user_details.first_name,
+                last_name=user_details.last_name,
+                account_email=user_details.email,
+                bundle_amount=bundle,
+                transaction_status="Failed"
+            )
+            new_transaction.save()
+            return Response(data={"code": "0001", "error": response.status_code, "status": "Failed",
+                                  "message": "Something went wrong."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
     else:
         return Response(data={"code": "0001", "error": "Authentication error", "status": "Failed",
                               "message": "Unable to authenticate using Authentication keys. Check and try again."},
@@ -144,27 +117,34 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
 
 
 def api_send_bundle(data):
-    url = "https://backend.boldassure.net:445/live/api/context/business/transaction/new-transaction"
+    bundle = data["bundle_amount"],
+    receiver = data["receiver"],
+    reference = f"{secrets.token_hex(6)}".upper()
 
-    payload = json.dumps({
-        "accountNo": data["account_number"],
-        "accountFirstName": data["first_name"],
-        "accountLastName": data["last_name"],
-        "accountMsisdn": data["receiver"],
-        "accountEmail": data["account_email"],
-        "accountVoiceBalance": 0,
-        "accountDataBalance": data["bundle_amount"],
-        "accountCashBalance": 0,
-        "active": True
-    })
+    url = "https://api.hubnet.app/send"
 
+    # Header with the API key
     headers = {
-        'Authorization': config("BEARER_TOKEN"),
-        'Content-Type': 'application/json'
+        "X-HUBNET-KEY": config("HUBNET_KEY"),
     }
 
-    response = requests.request("POST", url, headers=headers, data=payload)
-    print(response.json())
+    # Payload with transaction details
+    payload = {
+        "transaction_id": reference,
+        "volume": bundle,
+        "recipient": receiver
+    }
+
+    # Make the POST request
+    response = requests.post(url, headers=headers, json=payload)
+    data = response.json()
+
+    if response.status_code == 200:
+        print("Request successful:", response.json())
+    else:
+        print("Request failed with status code:", response.status_code)
+        print("Response:", response.text)
+
     return response
 
 

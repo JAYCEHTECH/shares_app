@@ -147,12 +147,12 @@ class NewTransactionView(APIView):
                     print(response.json())
                     print("this")
                     data = response.json()
+                    print(data)
                     if response.status_code == 200:
-                        batch_id = data["batchId"]
                         serializer.save(
                             user=user,
                             transaction_status="Completed",
-                            batch_id=batch_id
+                            batch_id="Null"
                         )
                         print(user_profile.bundle_amount)
                         user_profile.bundle_amount -= bundle_amount
@@ -161,7 +161,7 @@ class NewTransactionView(APIView):
                         # print(ver_response.json())
                         return Response(
                             data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
-                                  "reference": reference, "batch_id": batch_id if batch_id else 'None'}, status=status.HTTP_200_OK)
+                                  "reference": reference}, status=status.HTTP_200_OK)
                     else:
                         serializer.save(
                             user=user,
@@ -220,61 +220,33 @@ class TransactionDetail(APIView):
             wanted_transaction = NewTransaction.objects.filter(reference=reference, user=user).first()
             print(wanted_transaction)
             if wanted_transaction:
-                print(wanted_transaction.batch_id)
-                batch_id = wanted_transaction.batch_id
-                url = f"https://backend.boldassure.net:445/live/api/context/business/airteltigo-gh/ishare/tranx-status/{batch_id}"
+                transaction_id = reference  # Replace with the actual transaction ID
+                url = f"https://api.hubnet.app/verify?transaction_id={transaction_id}"
 
-                payload = {}
+                # Header with the API key
                 headers = {
-                    'Authorization': config("BEARER_TOKEN")
+                    "X-HUBNET-KEY": config("HUBNET_KEY"),
                 }
 
-                response = requests.request("GET", url, headers=headers, data=payload)
-                data = response.json()
-                print(data)
-                try:
-                    code = data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["apiResponse"]["responseCode"]
-                except:
-                    return Response(data={"code": "0001", "error": "Query Failed", "status": "Failed", "message": "Could not query transaction"}, status=status.HTTP_200_OK)
+                # Make the GET request
+                response = requests.get(url, headers=headers)
 
-                if code == "200":
-                    message = data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["apiResponse"]["responseMsg"]
-                    shared_bundle = data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["sharedBundle"]
-                    recipient = \
-                        data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["recipientDetails"][
-                            "recipientParams"][
-                            0]["recipientMsisdn"]
-                    recipient_message = \
-                        data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["recipientDetails"][
-                            "recipientParams"][
-                            0]["responseMsg"]
-                    data_response = {
-                        "api_response": {
-                                         "message": message,
-                                         "shared_bundle": shared_bundle,
-                                         "recipient": recipient,
-                                         "recipient_bundle_status": recipient_message},
-                        "code": "0000",
-                        "reference": reference,
-                        "batch_id": batch_id,
-                        "query_status": "Success"
-                    }
-                    return Response(data=data_response, status=status.HTTP_200_OK)
+                # Check the response
+                if response.status_code == 200:
+                    print("Request successful:", response.json())
+                    try:
+                        return Response(data=response.json(), status=status.HTTP_200_OK)
+                    except Exception as e:
+                        print(e)
+                        return Response(data={}, status=status.HTTP_200_OK)
+                else:
+                    print("Request failed with status code:", response.status_code)
+                    print("Response:", response.text)
+                    return Response(data=response.json(), status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(data={"code": "0001", "status": "Failed", "error": "Transaction not found",
                                       "message": "The reference entered matches no transaction"},
                                 status=status.HTTP_200_OK)
-            if code == "204":
-                return Response(data={"code": "0001", "status": "Failed", "error": "Not Found",
-                                      "message": "No record for this transaction. Check reference and try again"},
-                                status=status.HTTP_200_OK)
-            if code == "205":
-                recipient = \
-                    data["flexiIshareTranxStatus"]["flexiIshareTranxStatusResult"]["recipientDetails"]["recipientParams"][
-                        0][
-                        "recipientMsisdn"]
-                return Response(data={"code": "0001", "status": "Failed", "error": "Invalid Recipient",
-                                      "message": "The recipient number provided was invalid", "recipient": recipient}, status=status.HTTP_200_OK)
         else:
             return Response(data={"code": "0001", "error": "Authentication error",
                                   "status": "Failed",
