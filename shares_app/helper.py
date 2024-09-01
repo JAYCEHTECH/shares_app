@@ -33,6 +33,8 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
         }
 
         # Make the POST request
+        print(receiver);
+        print(config("HUBNET_KEY"));
         response = requests.post(url, headers=headers, json=payload)
         data = response.json()
 
