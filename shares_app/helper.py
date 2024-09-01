@@ -33,8 +33,8 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
         }
 
         # Make the POST request
-        print(receiver);
-        print(config("HUBNET_KEY"));
+        print(receiver)
+        print(config("HUBNET_KEY"))
         response = requests.post(url, headers=headers, json=payload)
         data = response.json()
 
@@ -63,6 +63,7 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
         else:
             print("Request failed with status code:", response.status_code)
             print("Response:", response.text)
+            print(receiver)
             new_transaction = models.NewTransaction.objects.create(
                 user=user_details,
                 reference=reference,
