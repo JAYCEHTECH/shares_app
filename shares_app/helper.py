@@ -12,6 +12,7 @@ from .api import api_views
 
 def send_flexi_bundle(request, user_details, current_user, receiver, bundle, reference, doing):
     response = api_views.ValidateAPIKeysView().post(request).data
+    print(receiver)
     if response["valid"]:
         user_transactions = models.NewTransaction.objects.filter(user=user_details)
         for transaction in user_transactions:
