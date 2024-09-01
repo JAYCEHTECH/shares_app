@@ -126,6 +126,11 @@ def api_send_bundle(data):
     reference = f"{secrets.token_hex(6)}".upper()
 
     print(receiver)
+    print(receiver)
+    print(receiver)
+    print(receiver)
+    print(receiver)
+    
     url = "https://api.hubnet.app/send"
 
     # Header with the API key
