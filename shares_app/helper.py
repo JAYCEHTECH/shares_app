@@ -42,7 +42,7 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
             new_transaction = models.NewTransaction.objects.create(
                 user=user_details,
                 reference=reference,
-                batch_id="Null",
+                batch_id=reference,
                 receiver=receiver,
                 account_number=current_user.phone,
                 first_name=user_details.first_name,
