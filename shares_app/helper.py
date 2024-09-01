@@ -121,11 +121,11 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
 
 
 def api_send_bundle(data):
-    bundle = data["bundle_amount"],
-    receiver = data["receiver"],
+    bundle = data["bundle_amount"]
+    receiver = data["receiver"]
     reference = f"{secrets.token_hex(6)}".upper()
 
-    print(receiver.replace(',()', '')
+    
     print(receiver)
     print(receiver)
     print(receiver)
