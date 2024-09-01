@@ -142,7 +142,7 @@ def api_send_bundle(data):
     payload = {
         "transaction_id": reference,
         "volume": str(bundle),
-        "recipient": receiver
+        "recipient": str(receiver)
     }
 
     # Make the POST request
