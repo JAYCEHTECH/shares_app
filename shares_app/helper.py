@@ -125,7 +125,7 @@ def api_send_bundle(data):
     receiver = data["receiver"],
     reference = f"{secrets.token_hex(6)}".upper()
 
-    print(receiver.replace(',', '')
+    print(receiver.replace(',()', '')
     print(receiver)
     print(receiver)
     print(receiver)
