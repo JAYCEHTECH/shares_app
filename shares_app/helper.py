@@ -19,24 +19,22 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
             if transaction.reference == reference:
                 reference = reference = f"{secrets.token_hex(6)}".upper()
 
-        url = "https://api.hubnet.app/send"
+        url = "https://console.hubnet.app/live/api/context/business/transaction/at-new-transaction"
 
-        # Header with the API key
-        headers = {
-            "X-HUBNET-KEY": config("HUBNET_KEY"),
-        }
-
-        # Payload with transaction details
-        payload = {
-            "transaction_id": reference,
+        payload = json.dumps({
+            "phone": str(receiver),
             "volume": str(int(bundle)),
-            "recipient": receiver
+            "reference": reference
+        })
+
+        headers = {
+            'token': config("HUBNET_KEYY"),
+            'Content-Type': 'application/json'
         }
 
-        # Make the POST request
-        print(receiver)
-        print(config("HUBNET_KEY"))
-        response = requests.post(url, headers=headers, json=payload)
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        print(response.text)
         data = response.json()
 
         # Check the response
@@ -154,23 +152,23 @@ def api_send_bundle(data):
     print(bundle)
     print(reference)
     print(config("HUBNET_KEY"))
-    
-    url = "https://api.hubnet.app/send"
 
-    # Header with the API key
-    headers = {
-        "X-HUBNET-KEY": config("HUBNET_KEY"),
-    }
+    url = "https://console.hubnet.app/live/api/context/business/transaction/at-new-transaction"
 
-    # Payload with transaction details
-    payload = {
-        "transaction_id": reference,
+    payload = json.dumps({
+        "phone": str(receiver),
         "volume": str(int(bundle)),
-        "recipient": str(receiver)
+        "reference": reference
+    })
+
+    headers = {
+        'token': config("HUBNET_KEYY"),
+        'Content-Type': 'application/json'
     }
 
-    # Make the POST request
-    response = requests.post(url, headers=headers, json=payload)
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    print(response.text)
     data = response.json()
     print(data)
 
