@@ -34,6 +34,9 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
 
         response = requests.request("POST", url, headers=headers, data=payload)
 
+        current_user.bundle_amount -= bundle
+        current_user.save()
+
         print(response.text)
         data = response.json()
 
@@ -56,8 +59,6 @@ def send_flexi_bundle(request, user_details, current_user, receiver, bundle, ref
                     transaction_status="Completed"
                 )
                 new_transaction.save()
-                current_user.bundle_amount -= bundle
-                current_user.save()
                 print(current_user.bundle_amount)
                 return Response(
                     data={"code": "0000", "status": "Success", "message": "Transaction was completed successfully",
