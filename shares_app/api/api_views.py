@@ -154,7 +154,7 @@ class NewTransactionView(APIView):
                             serializer.save(
                                 user=user,
                                 transaction_status="Completed",
-                                batch_id="Null"
+                                batch_id="Null",
                             )
                             print(user_profile.bundle_amount)
                             user_profile.bundle_amount -= bundle_amount
