@@ -142,7 +142,7 @@ def send_bundle_page(request):
 
 @login_required(login_url='login')
 def transaction_history(request):
-    transactions = models.NewTransaction.objects.filter(user=request.user).order_by('transaction_date').reverse()
+    transactions = models.NewTransaction.objects.filter(user=request.user).order_by('transaction_date').reverse()[:300]
     user_profile_data = models.UserProfile.objects.filter(user=request.user).first()
     context = {'txns': transactions, 'data': user_profile_data}
     return render(request, 'layouts/txn-tables.html', context=context)
@@ -310,7 +310,7 @@ def crediting_page(request):
 
 @login_required(login_url='login')
 def credit_history(request):
-    credits_txn = models.CreditingHistory.objects.filter(user=request.user).order_by('date').reverse()
+    credits_txn = models.CreditingHistory.objects.filter(user=request.user).order_by('date').reverse()[:300]
     user_profile_data = models.UserProfile.objects.filter(user=request.user).first()
     context = {'credits': credits_txn, 'data': user_profile_data}
     return render(request, 'layouts/credit-tables.html', context=context)
@@ -344,7 +344,7 @@ def query_transaction(request):
 
 @login_required(login_url='login')
 def all_transactions(request):
-    all_users_transactions = models.NewTransaction.objects.all().order_by("transaction_date").reverse()
+    all_users_transactions = models.NewTransaction.objects.all().order_by("transaction_date").reverse()[:500]
     context = {"txns": all_users_transactions}
     return render(request, "layouts/admin-all-txns.html", context=context)
 
