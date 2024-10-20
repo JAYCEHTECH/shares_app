@@ -68,12 +68,12 @@
               </a>
             </li>
 
-          <li class="menu-item {% if request.resolver_match.url_name == 'query_transaction' %}active{% endif %}">
+<!--          <li class="menu-item {% if request.resolver_match.url_name == 'query_transaction' %}active{% endif %}">
               <a href="{% url 'query_transaction' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-search"></i>
                 <div data-i18n="Tables">Query Transaction</div>
               </a>
-            </li>
+            </li>   -->
 
                     {% if request.user.is_staff %}
           <li class="menu-item {% if request.resolver_match.url_name == 'all_transactions' %}active{% endif %}">
